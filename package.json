@@ -55,13 +55,18 @@
     "debug": "^3.1.0",
     "jquery": "^3.3.1",
     "pdfjs-dist": "^2.0.428",
+    "semantic-ui": "^2.3.0",
     "vue": "^2.3.3",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
     "vuex": "^2.3.1"
   },
   "devDependencies": {
+    "@types/debug": "0.0.30",
     "@types/fs-extra": "^5.0.1",
+    "@types/jquery": "^3.3.1",
+    "@types/semantic-ui": "^2.2.6",
+    "@types/vue-router": "^2.0.0",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-runtime": "^6.23.0",

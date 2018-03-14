@@ -23,7 +23,7 @@ let whiteListedModules = ['vue']
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.js'),
+    renderer: path.join(__dirname, '../src/renderer/main.ts'),
     'pdf.worker': 'pdfjs-dist/build/pdf.worker.entry.js'
   },
   externals: [
@@ -94,7 +94,11 @@ let rendererConfig = {
       },
       {
         test: /\.ts$/,
-        loader: 'ts-loader'
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+        }
       }
     ]
   },

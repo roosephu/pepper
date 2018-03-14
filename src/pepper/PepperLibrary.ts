@@ -1,33 +1,18 @@
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import { join } from "path";
+import PepperFolder from "./PepperFolder";
 import PepperItem from "./PepperItem";
 
-// class PepperFolder {
-//     subdirs: {[key: string]: PepperFolder};
-//     papers: PepperItem[];
-
-//     constructor (papers: PepperItem[]) {
-//         this.papers = papers
-//     }
-
-//     dump (): any {
-//         const subdirs: {[key: string]: any} = {}
-//         for (const [name, subdir] of Object.entries(subdirs)) {
-//             subdirs[name] = subdir.dump()
-//         }
-//         return {subdirs, papers: this.papers}
-//     }
-// }
-
 export default class PepperLibrary {
-    // root: PepperFolder;
-    public papers: PepperItem[];
+    public root: PepperFolder;
+    // public papers: PepperItem[];
     public path: string;
 
     constructor() {
-        this.papers = [];
+        // this.papers = [];
         this.path = join(remote.app.getPath("appData"), "Pepper", "Library");
+        this.root = new PepperFolder();
         if (!fs.existsSync(this.path)) {
             fs.mkdirpSync(this.path);
         } else if (fs.existsSync(this.dbPath)) {
@@ -40,25 +25,28 @@ export default class PepperLibrary {
     }
 
     public async add(paper: PepperItem) {
-        this.papers.push(paper);
+        this.root.addItem(paper);
+        // this.papers.push(paper);
         await paper.writeDisk(this.path);
         await this.writeDisk();
     }
 
     public load(x: any) {
-        for (const y of x) {
-            this.papers.push(Object.assign(new PepperItem(""), y));
-        }
+        // this.root.
+        // for (const y of x) {
+        //     this.papers.push(Object.assign(new PepperItem(""), y));
+        // }
         // if (x) this.papers = x
     }
 
     public dump(): any {
-        return this.papers;
-        // return this.root.dump()
+        // return this.papers;
+        return this.root.dump();
     }
 
     public getPapers(): PepperItem[] {
-        return this.papers;
+        return this.root.getPapersRecursive();
+        // return this.papers;
     }
 
     public async writeDisk() {
