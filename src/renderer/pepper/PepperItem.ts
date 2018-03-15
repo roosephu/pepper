@@ -19,6 +19,7 @@ class PepperItem {
     public issue: string;
     public pages: string;
     public ISSN: string;
+    public done: boolean;
 
     constructor(itemType: string) {
         this.itemType = itemType;
@@ -26,6 +27,7 @@ class PepperItem {
         this.notes = [];
         this.tags = [];
         this.attachments = [];
+        this.done = true;
     }
 
     public getCreators(): string {

@@ -23,11 +23,17 @@ export default class PepperAttachment {
     public id: string;
     public entry: string;
 
-    constructor(mimeType: string, title: string, url: string) {
+    constructor(mimeType: string, title: string, url: string, paper?: PepperItem) {
         this.mimeType = mimeType;
         this.title = title;
         this.url = url;
-        this.id = randomBytes(12).toString("base64");
+        this.id = randomBytes(12).toString("hex");
+
+        if (paper) {
+            this.entry = `${paper.getCreators()} - ${paper.title}.pdf`;
+        } else {
+            this.entry = "paper.pdf";
+        }
     }
 
     public async save(path: string, paper?: PepperItem) {
@@ -38,13 +44,6 @@ export default class PepperAttachment {
 
         if (this.mimeType === "application/pdf") {
             const data = await Axios(this.url, { responseType: "blob" });
-            if (!this.entry) {
-                if (paper) {
-                    this.entry = `${paper.getCreators()} - ${paper.title}.pdf`;
-                } else {
-                    this.entry = "paper.pdf";
-                }
-            }
             await saveBlobToFile(join(path, this.entry), data.data);
         }
     }

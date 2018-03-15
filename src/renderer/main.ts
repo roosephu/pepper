@@ -3,7 +3,7 @@ import Vue from "vue";
 
 import App from "./App.vue";
 import router from "./router";
-// import store from "./store";
+import store from "./store";
 
 import * as jquery from "jquery";
 // console.log((global as any).$, (global as any).jQuery);
@@ -22,10 +22,16 @@ if (!process.env.IS_WEB) { Vue.use(require("vue-electron")); }
 // Vue.http = Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
 
+import Editable from "./editable";
+import { install as Pepper } from "./pepper";
+
+Vue.use(Editable);
+Vue.use(Pepper);
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },
   router,
-  // store,
+  store,
   template: "<App/>",
 }).$mount("#app");

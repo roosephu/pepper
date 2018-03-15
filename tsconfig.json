@@ -7,8 +7,10 @@
     "outDir": "dist",
     "baseUrl": ".",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["node_modules/*"],
+      "@": ["src/renderer"],
     }
   },
   "lib": [ "es2017.object", "ES2015" ],

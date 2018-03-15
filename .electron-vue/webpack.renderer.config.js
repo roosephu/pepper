@@ -21,6 +21,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 let whiteListedModules = ['vue']
 
 let rendererConfig = {
+  mode: process.env.NODE_ENV || 'development',
   devtool: '#cheap-module-eval-source-map',
   entry: {
     renderer: path.join(__dirname, '../src/renderer/main.ts'),

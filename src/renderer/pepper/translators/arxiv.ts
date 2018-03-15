@@ -75,11 +75,13 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
         "application/pdf",
         `arXiv:${articleID} PDF`,
         `http://www.arxiv.org/pdf/${articleID}.pdf`,
+        newItem,
     ));
     newItem.attachments.push(new PepperAttachment(
         "text/html",
         "arXiv.org Snapshot",
         newItem.url,
+        newItem,
     ));
 
     // TODO DOI
