@@ -2,9 +2,9 @@ import debug from "debug";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import { join } from "path";
+import PepperCiter from "./PepperCiter";
 import PepperFolder from "./PepperFolder";
 import PepperItem from "./PepperItem";
-import PepperCiter from "./PepperCiter";
 
 const log = debug("pepper:Library");
 

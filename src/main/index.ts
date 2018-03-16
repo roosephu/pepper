@@ -16,12 +16,12 @@ function createWindow() {
    * Initial window options
    */
     mainWindow = new BrowserWindow({
-        height: 563,
+        height: 1024,
         useContentSize: true,
         webPreferences: {
             webSecurity: false,
         },
-        width: 1000,
+        width: 1280,
     });
 
     mainWindow.loadURL(winURL);
@@ -44,16 +44,6 @@ app.on("activate", () => {
         createWindow();
     }
 });
-
-const menu = new Menu();
-menu.append(new MenuItem({
-    accelerator: "cmd+s",
-    label: "save",
-    click() {
-        console.log("hello world!");
-    },
-}));
-// Menu.s
 
 /**
  * Auto Updater

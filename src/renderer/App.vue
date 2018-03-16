@@ -34,7 +34,7 @@
                                     th.four.wide Author
                                     th.collapsing Cite Key
                             tbody
-                                PItem(v-for="(paper, $index) in Library.getCursorPapers()", :paper="paper", :key='$index')
+                                PItem(v-for="(paper, $index) in Library.getCursorPapers()", :paper="paper", :key="paper._id")
         //- router-view
 </template>
 

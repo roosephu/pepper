@@ -1,15 +1,18 @@
+import { uniqueId } from "./idGen";
 import PepperItem from "./PepperItem";
 
 export default class PepperFolder {
     public subdirs: PepperFolder[]; // {[key: string]: PepperFolder};
     public papers: PepperItem[];
     public name: string;
-    public parent: PepperFolder | null;
+    public parent: PepperFolder;
+    public _id: string;
 
     constructor(name: string, papers?: PepperItem[]) {
         this.papers = papers || [];
         this.subdirs = [];
         this.name = name;
+        this._id = uniqueId();
     }
 
     public getPapersRecursive(result?: PepperItem[]): PepperItem[] {

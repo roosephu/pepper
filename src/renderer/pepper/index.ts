@@ -1,5 +1,5 @@
 import { remote } from "electron";
-import { default as _Vue, VueConstructor } from "vue";
+import _Vue, { VueConstructor } from "vue";
 import PepperLibrary from "./PepperLibrary";
 
 const Library = new PepperLibrary();

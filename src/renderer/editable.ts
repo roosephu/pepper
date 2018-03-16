@@ -1,4 +1,4 @@
-import { default as _Vue, VueConstructor } from "vue";
+import _Vue, { VueConstructor } from "vue";
 import { VNode, VNodeDirective } from "vue/types/vnode";
 
 function install(Vue: VueConstructor<_Vue>) {

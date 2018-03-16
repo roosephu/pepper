@@ -2,6 +2,7 @@ import Axios from "axios";
 import { randomBytes } from "crypto";
 import * as fs from "fs-extra";
 import { join } from "path";
+import { uniqueId } from "./idGen";
 import PepperItem from "./PepperItem";
 
 
@@ -20,14 +21,14 @@ export default class PepperAttachment {
     public mimeType: string;
     public title: string;
     public url: string;
-    public id: string;
+    public _id: string;
     public entry: string;
 
     constructor(mimeType: string, title: string, url: string, paper?: PepperItem) {
         this.mimeType = mimeType;
         this.title = title;
         this.url = url;
-        this.id = randomBytes(12).toString("hex");
+        this._id = uniqueId();
 
         if (paper) {
             this.entry = `${paper.getCreators()} - ${paper.title}.pdf`;
@@ -37,7 +38,7 @@ export default class PepperAttachment {
     }
 
     public async save(path: string, paper?: PepperItem) {
-        path = join(path, this.id);
+        path = join(path, this._id);
         if (!fs.existsSync(path)) {
             await fs.mkdirp(path);
         }

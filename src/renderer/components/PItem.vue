@@ -5,8 +5,8 @@
             .ui.checkbox.fitted
                 input(type="checkbox", v-model="paper.done")
             //- i.icon.calendar.check(:class="{'online': !thi}")
-        td
-            a(v-editable="paper.title", @dblclick="open(paper)")
+        td(@dblclick="open(paper)")
+            a(v-editable="paper.title")
         td {{paper.getCreators()}}
         td {{paper.citeKey}}
 </template>

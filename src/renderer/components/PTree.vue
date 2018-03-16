@@ -1,19 +1,23 @@
 <template lang="pug">
     .item
-        .right.floated
-            //- i.icon.caret.left
-            i.plus.icon(@click="addSubfolder")
-            i.trash.icon(@click="remove")
+        //- .right.floated
+        //-     //- i.icon.caret.left
+        //-     i.plus.icon(@click="addSubfolder")
+        //-     i.trash.icon(@click="remove")
         i.folder.icon(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}', @click='toggleFolding')
         .content(@dblclick='gotoCursor')
-            .ui.tiny.header(v-editable="folder.name", :class="{blue: folder == $pepper.cursor}") {{folder.name}}
-        .shiftright.list(v-if='!folded && hasSubfolders')
-            PTree(v-for="(subdir, $index) in folder.subdirs", :folder="subdir", :key='$index')
+            .ui.tiny.header(v-editable="folder.name", :class="{blue: folder == $pepper.cursor}", @contextmenu="popup") {{folder.name}}
+        .list(v-if='!folded && hasSubfolders')
+            PTree(v-for="(subdir, $index) in folder.subdirs", :folder="subdir", :key="subdir._id")
 </template>
 
 <script lang="ts">
+import debug from "debug";
+import { MenuItemConstructorOptions, remote } from "electron";
 import Vue from "vue";
 import PepperFolder from "../pepper/PepperFolder";
+
+const log = debug("pepper:PTree");
 
 export default Vue.extend({
     name: "PTree",
@@ -56,18 +60,27 @@ export default Vue.extend({
         gotoCursor() {
             this.$pepper.cursor = this.folder;
         },
+
+        popup() {
+            this.$menu.popup(remote.getCurrentWindow());
+        },
     },
 
     mounted() {
-        //
-        // console.log(this.folder);
+        const template = [
+            { label: "New Subfolder", click: this.addSubfolder },
+            { label: "Remove this folder", click: this.remove },
+            // { type: "separator" as "separator" },
+            // { label: "hello" },
+        ];
+        this.$menu = remote.Menu.buildFromTemplate(template);
     },
 });
 
 </script>
 
 <style scoped>
-.shiftright {
+.list {
     padding-top: 0.4em !important;
     padding-left: 1.5em !important;
 }

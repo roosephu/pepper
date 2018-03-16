@@ -1,16 +1,17 @@
 import * as fs from "fs-extra";
 import { join } from "path";
+import { uniqueId } from "./idGen";
 import PepperAttachment from "./PepperAttachment";
 
 export class Creator {
-    firstName: string;
-    lastName: string;
-    creatorType: string;
+    public firstName: string;
+    public lastName: string;
+    public creatorType: string;
 
     constructor(firstName: string, lastName: string, creatorType?: string) {
-        this.firstName = firstName
-        this.lastName = lastName
-        this.creatorType = creatorType
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.creatorType = creatorType;
     }
 }
 
@@ -33,6 +34,7 @@ export default class PepperItem {
     public ISSN: string;
     public done: boolean;
     public citeKey: string;
+    public _id: string;
 
     constructor(itemType: string) {
         this.itemType = itemType;
@@ -41,6 +43,7 @@ export default class PepperItem {
         this.tags = [];
         this.attachments = [];
         this.done = true;
+        this._id = uniqueId();
     }
 
     public getCreators(): string {
@@ -62,11 +65,11 @@ export default class PepperItem {
         this.saveAttachments(path);
     }
 
-    public getMainFile(): string | undefined {
+    public getMainFile(): string {
         // TODO: possibly use priority for each type
         for (const attachment of this.attachments) {
             if (attachment.mimeType === "application/pdf") {
-                return join(attachment.id, attachment.entry);
+                return join(attachment._id, attachment.entry);
             }
         }
         return undefined;
