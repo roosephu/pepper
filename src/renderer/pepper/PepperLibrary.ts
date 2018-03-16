@@ -59,13 +59,13 @@ export default class PepperLibrary {
         return this.root.dump();
     }
 
-    public getPapers(): PepperItem[] {
-        return this.root.getPapersRecursive();
+    public getPapers(recursive: boolean): PepperItem[] {
+        return this.root.getPapers(recursive);
         // return this.papers;
     }
 
-    public getCursorPapers(): PepperItem[] {
-        return this.cursor.getPapersRecursive();
+    public getCursorPapers(recursive: boolean): PepperItem[] {
+        return this.cursor.getPapers(recursive);
     }
 
     public async writeDisk() {
@@ -85,7 +85,7 @@ export default class PepperLibrary {
             this.load(JSON.parse(Library));
         }
         log("Read from disk.");
-        for (const paper of this.getCursorPapers()) {
+        for (const paper of this.getPapers(true)) {
             if (!paper.citeKey) {
                 paper.citeKey = this.citer.getCiteKey(paper);
             }

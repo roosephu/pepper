@@ -15,13 +15,13 @@ export default class PepperFolder {
         this._id = uniqueId();
     }
 
-    public getPapersRecursive(result?: PepperItem[]): PepperItem[] {
-        if (!result) {
-            result = [];
-        }
+    public getPapers(recursive: boolean, result?: PepperItem[]): PepperItem[] {
+        result = result || [];
         result.push(...this.papers);
-        for (const subdir of this.subdirs) {
-            subdir.getPapersRecursive(result);
+        if (recursive) {
+            for (const subdir of this.subdirs) {
+                subdir.getPapers(recursive, result);
+            }
         }
         return result;
     }
@@ -57,7 +57,7 @@ export default class PepperFolder {
 
     public removeFolder(subdir: PepperFolder) {
         // console.log(this, subdir);
-        this.papers.push(...subdir.getPapersRecursive());
+        this.papers.push(...subdir.getPapers(true));
         const index = this.subdirs.indexOf(subdir);
         if (index !== -1) {
             // delete this.subdirs[index];

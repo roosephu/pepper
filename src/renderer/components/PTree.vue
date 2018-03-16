@@ -8,7 +8,7 @@
         .content(@dblclick='gotoCursor')
             .ui.tiny.header(v-editable="folder.name", :class="{blue: folder == $pepper.cursor}", @contextmenu="popup") {{folder.name}}
         .list(v-if='!folded && hasSubfolders')
-            PTree(v-for="(subdir, $index) in folder.subdirs", :folder="subdir", :key="subdir._id")
+            PTree(v-for="subdir in folder.subdirs", :folder="subdir", :key="subdir._id")
 </template>
 
 <script lang="ts">

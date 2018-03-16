@@ -25,6 +25,9 @@
                         .ui.list
                             PTree(:folder="Library.root")
                     .twelve.wide.column
+                        .ui.checkbox
+                            input(type='checkbox', v-model="showPapersRec")
+                            label show papers recursively
                         table.ui.table.celled.very.compact.striped
                             thead
                                 tr
@@ -34,13 +37,15 @@
                                     th.four.wide Author
                                     th.collapsing Cite Key
                             tbody
-                                PItem(v-for="(paper, $index) in Library.getCursorPapers()", :paper="paper", :key="paper._id")
+                                //- draggble(v-model='Library')
+                                PItem(v-for="paper in Library.getCursorPapers(showPapersRec)", :paper="paper", :key="paper._id")
         //- router-view
 </template>
 
 <script lang="ts">
 import debug from "debug";
 import Vue from "vue";
+// import Draggable from "vuedraggable";
 import PItem from "./components/PItem.vue";
 import PTree from "./components/PTree.vue";
 import Library from "./pepper";
@@ -56,6 +61,7 @@ const log = debug("pepper:main");
 
 export default Vue.extend({
     components: {
+        // Draggable,
         PItem,
         PTree,
     },
@@ -63,7 +69,10 @@ export default Vue.extend({
     name: "pepper",
 
     data() {
-        return { Library }; // enable Vue to track Library
+        return {
+            Library,
+            showPapersRec: true,
+        }; // enable Vue to track Library
     },
 
     methods: {
