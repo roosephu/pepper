@@ -1,6 +1,6 @@
 # pepper
 
-> A tool for paper management
+A tool for paper management. Slim version of Zotero.
 
 #### Build Setup
 
@@ -17,6 +17,11 @@ npm run build
 
 ```
 
----
+# TODO
 
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue)@[7c4e3e9](https://github.com/SimulatedGREG/electron-vue/tree/7c4e3e90a772bd4c27d2dd4790f61f09bae0fcef) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+1. Toolkit to migrate Zotero translators.
+2. Show tags.
+3. Search.
+4. Export.
+5. BibTeX support.
+6. Browser extensions (possibly together with a server). 

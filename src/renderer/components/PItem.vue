@@ -1,13 +1,14 @@
 <template lang="pug">
-    tr(@dblclick="open(paper)")
+    tr
         td
             //- i.white.icon.calendar.online
-            .ui.checkbox
+            .ui.checkbox.fitted
                 input(type="checkbox", v-model="paper.done")
             //- i.icon.calendar.check(:class="{'online': !thi}")
         td
-            a(v-editable="paper.title")
+            a(v-editable="paper.title", @dblclick="open(paper)")
         td {{paper.getCreators()}}
+        td {{paper.citeKey}}
 </template>
 
 <script lang="ts">
@@ -24,7 +25,7 @@ export default Vue.extend({
 
     methods: {
         open(paper: PepperItem) {
-            log("dblclick");
+            // log("dblclick");
             const attachment = paper.getMainFile();
             if (attachment) {
                 this.$electron.shell.openItem(this.$pepper.composePath(attachment));

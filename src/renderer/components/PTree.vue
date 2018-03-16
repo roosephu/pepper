@@ -5,8 +5,8 @@
             i.plus.icon(@click="addSubfolder")
             i.trash.icon(@click="remove")
         i.folder.icon(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}', @click='toggleFolding')
-        .content
-            .ui.tiny.header(v-editable="folder.name", :class="{blue: folder == $pepper.cursor}", @dblclick='gotoCursor') {{folder.name}}
+        .content(@dblclick='gotoCursor')
+            .ui.tiny.header(v-editable="folder.name", :class="{blue: folder == $pepper.cursor}") {{folder.name}}
         .shiftright.list(v-if='!folded && hasSubfolders')
             PTree(v-for="(subdir, $index) in folder.subdirs", :folder="subdir", :key='$index')
 </template>
@@ -24,7 +24,7 @@ export default Vue.extend({
 
     data() {
         return {
-            folded: true,
+            folded: false,
         };
     },
 

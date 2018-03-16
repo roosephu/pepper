@@ -2,10 +2,22 @@ import * as fs from "fs-extra";
 import { join } from "path";
 import PepperAttachment from "./PepperAttachment";
 
-class PepperItem {
+export class Creator {
+    firstName: string;
+    lastName: string;
+    creatorType: string;
+
+    constructor(firstName: string, lastName: string, creatorType?: string) {
+        this.firstName = firstName
+        this.lastName = lastName
+        this.creatorType = creatorType
+    }
+}
+
+export default class PepperItem {
     public itemType: string;
     public title: string;
-    public creators: any[];
+    public creators: Creator[];
     public date: string;
     public abstractNote: string;
     public notes: any[];
@@ -20,6 +32,7 @@ class PepperItem {
     public pages: string;
     public ISSN: string;
     public done: boolean;
+    public citeKey: string;
 
     constructor(itemType: string) {
         this.itemType = itemType;
@@ -60,4 +73,3 @@ class PepperItem {
     }
 }
 
-export default PepperItem;

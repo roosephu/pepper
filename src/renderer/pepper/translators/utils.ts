@@ -1,3 +1,5 @@
+import { Creator } from "../PepperItem";
+
 
 function xpathText(doc: Document | Node, expr: string, ns?: any, delimiter?: string) {
     const result: any[] = xpathMatch(doc, expr, ns);
@@ -31,7 +33,7 @@ function xpathMatch(doc: Document | Node, expr: string, ns?: any): Node[] {
     return ret;
 }
 
-function cleanAuthor(author: string, type: string, useComma?: boolean) {
+function cleanAuthor(author: string, type: string, useComma?: boolean): Creator {
   const allCaps = "A-Z" + "\u0400-\u042f";		// cyrilic
 
   const allCapsRe = new RegExp("^[" + allCaps + "]+$");

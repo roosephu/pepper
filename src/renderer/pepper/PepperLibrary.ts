@@ -4,12 +4,14 @@ import * as fs from "fs-extra";
 import { join } from "path";
 import PepperFolder from "./PepperFolder";
 import PepperItem from "./PepperItem";
+import PepperCiter from "./PepperCiter";
 
 const log = debug("pepper:Library");
 
 export default class PepperLibrary {
     public root: PepperFolder;
     public cursor: PepperFolder;
+    public citer: PepperCiter;
     // public papers: PepperItem[];
     public path: string;
 
@@ -18,11 +20,14 @@ export default class PepperLibrary {
         // console.log("main path", this.path);
         this.root = new PepperFolder("Library");
         this.cursor = this.root;
+        this.citer = new PepperCiter();
+
         if (!fs.existsSync(this.path)) {
             fs.mkdirpSync(this.path);
         } else if (fs.existsSync(this.dbPath)) {
             this.readDisk();
         }
+
 
         setInterval(() => this.writeDisk(), 60000);
     }
@@ -33,13 +38,16 @@ export default class PepperLibrary {
 
     public async add(paper: PepperItem) {
         // console.log(paper);
+        if (!paper.citeKey) {
+            paper.citeKey = this.citer.getCiteKey(paper);
+        }
         this.cursor.addItem(paper);
         await paper.writeDisk(this.path);
         await this.writeDisk();
     }
 
     public load(x: any) {
-        this.root.load(x);
+        if (x) { this.root.load(x); }
         // for (const y of x) {
         //     this.papers.push(Object.assign(new PepperItem(""), y));
         // }
@@ -61,8 +69,9 @@ export default class PepperLibrary {
     }
 
     public async writeDisk() {
-        const db = JSON.stringify(this.dump(), null, 2);
-        await fs.writeFile(join(this.path, "db.json"), db);
+        localStorage.Library = JSON.stringify(this.dump());
+        // const db = JSON.stringify(this.dump(), null, 2);
+        // await fs.writeFile(join(this.path, "db.json"), db);
         log("Write to disk.");
     }
 
@@ -71,8 +80,15 @@ export default class PepperLibrary {
     }
 
     public readDisk() {
-        const db = JSON.parse(fs.readFileSync(this.dbPath).toString("utf-8"));
-        this.load(db);
+        const { Library } = localStorage;
+        if (Library) {
+            this.load(JSON.parse(Library));
+        }
         log("Read from disk.");
+        for (const paper of this.getCursorPapers()) {
+            if (!paper.citeKey) {
+                paper.citeKey = this.citer.getCiteKey(paper);
+            }
+        }
     }
 }

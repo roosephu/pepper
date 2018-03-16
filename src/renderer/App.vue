@@ -11,8 +11,7 @@
         .ui.stripe.vertical.segment
             .ui.grid.aligned.middle.container
                 .row
-                    .three.wide.column
-                    .twelve.wide.column
+                    .sixteen.wide.column
                         .ui.form#urlForm
                             .ui.two.fields
                                 .fourteen.wide.field
@@ -30,8 +29,10 @@
                             thead
                                 tr
                                     th.collapsing.center
-                                    th Title
-                                    th Author
+                                        .ui.checkbox.fitted
+                                    th.twelve.wide Title
+                                    th.four.wide Author
+                                    th.collapsing Cite Key
                             tbody
                                 PItem(v-for="(paper, $index) in Library.getCursorPapers()", :paper="paper", :key='$index')
         //- router-view
@@ -82,6 +83,7 @@ export default Vue.extend({
     mounted() {
         this.$nextTick(() => {
             const $this = this;
+            $(".checkbox").checkbox();
 
             $("#urlForm").form({
                 onSuccess(e: JQuery.Event<HTMLElement>, fields: any) {
