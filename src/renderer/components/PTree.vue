@@ -4,9 +4,13 @@
         //-     //- i.icon.caret.left
         //-     i.plus.icon(@click="addSubfolder")
         //-     i.trash.icon(@click="remove")
-        i.folder.icon(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}', @click='toggleFolding')
-        .content(@dblclick='gotoCursor')
-            .ui.tiny.header(v-editable="folder.name", :class="{blue: folder == $pepper.cursor}", @contextmenu="popup") {{folder.name}}
+        //- .ui.label
+        //- .ui.header(@dragstart="drag" draggable="true" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave" :class="{border: candidate}")
+        i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='toggleFolding')
+        .floated.content(@dblclick='gotoCursor')
+            .ui.text.bold(v-editable="folder.name" :class="{blue: folder == $pepper.cursor, border: isCandidate}" @contextmenu="popup"
+                          @dragstart="drag" draggable="true" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave") {{folder.name}}
+
         .list(v-if='!folded && hasSubfolders')
             PTree(v-for="subdir in folder.subdirs", :folder="subdir", :key="subdir._id")
 </template>
@@ -29,6 +33,7 @@ export default Vue.extend({
     data() {
         return {
             folded: false,
+            isCandidate: false,
         };
     },
 
@@ -64,6 +69,23 @@ export default Vue.extend({
         popup() {
             this.$menu.popup(remote.getCurrentWindow());
         },
+
+        drop(event: DragEvent) {
+            log(event.dataTransfer.getData("item"));
+        },
+
+        dragEnter(event: Event) {
+            this.isCandidate = true;
+        },
+
+        dragLeave(event: Event) {
+            this.isCandidate = false;
+        },
+
+        drag(event: DragEvent) {
+            event.dataTransfer.setData("folder", this.folder._id);
+        },
+
     },
 
     mounted() {
@@ -71,7 +93,6 @@ export default Vue.extend({
             { label: "New Subfolder", click: this.addSubfolder },
             { label: "Remove this folder", click: this.remove },
             // { type: "separator" as "separator" },
-            // { label: "hello" },
         ];
         this.$menu = remote.Menu.buildFromTemplate(template);
     },
@@ -83,6 +104,24 @@ export default Vue.extend({
 .list {
     padding-top: 0.4em !important;
     padding-left: 1.5em !important;
+}
+
+.ui.text.bold {
+    font-weight: bold;
+}
+
+.ui.text.blue {
+    color: #3B83C0;
+}
+
+.ui.text.border {
+    border: 1px solid #3B83C0;
+    /* margin: -1px; */
+}
+
+.ui.text {
+    border: 1px solid transparent;
+    /* margin-right: 100%; */
 }
 
 </style>

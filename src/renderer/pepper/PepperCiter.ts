@@ -1,22 +1,44 @@
+import debug from "debug";
+import shortid from "shortid";
 import PepperItem from "./PepperItem";
-import debug from 'debug';
 
 const MOD = 26;
 
-const log = debug('pepper:citer')
+const log = debug("pepper:citer");
 
 export default class PepperCiter {
     public citeKeys: {[key: string]: boolean};
+    public _id: string;
 
     constructor() {
-        //dd
+        // dd
         this.citeKeys = {};
+        this._id = shortid.generate();
+    }
+
+    public getCiteKey(paper: PepperItem): string {
+        let prefix = "";
+        if (paper.creators.length === 1) {
+            const lastName = paper.creators[0].lastName;
+            prefix += lastName;
+        } else {
+            const lastNameInitials = paper.creators.map((x) => x.lastName.charAt(0)).join("");
+            prefix += lastNameInitials;
+        }
+        if (paper.date) {
+            const year = paper.date.split("-")[0].slice(2);
+            prefix += year;
+        }
+
+        const key = this.appendSuffix(prefix);
+        this.citeKeys[key] = true;
+        return key;
     }
 
     private appendSuffix(prefix: string): string {
         const index: number[] = [];
         for (let T = 0; T <= 10; ++T) {
-            const suffix = String.fromCharCode(...index.map(x => x + 97));
+            const suffix = String.fromCharCode(...index.map((x) => x + 97));
             const key = prefix + suffix;
             log(prefix, suffix, key, index);
 
@@ -42,24 +64,4 @@ export default class PepperCiter {
         }
         return "???";
     }
-
-    public getCiteKey(paper: PepperItem): string {
-        let prefix = "";
-        if (paper.creators.length == 1) {
-            const lastName = paper.creators[0].lastName;
-            prefix += lastName;
-        } else {
-            const lastNameInitials = paper.creators.map((x) => x.lastName.charAt(0)).join("");
-            prefix += lastNameInitials;
-        }
-        if (paper.date) {
-            const year = paper.date.split("-")[0].slice(2);
-            prefix += year;
-        }
-
-         const key = this.appendSuffix(prefix);
-         this.citeKeys[key] = true;
-         return key;
-    }
-
 }

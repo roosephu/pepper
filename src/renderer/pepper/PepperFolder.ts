@@ -1,4 +1,4 @@
-import { uniqueId } from "./idGen";
+import shortid from "shortid";
 import PepperItem from "./PepperItem";
 
 export default class PepperFolder {
@@ -12,7 +12,7 @@ export default class PepperFolder {
         this.papers = papers || [];
         this.subdirs = [];
         this.name = name;
-        this._id = uniqueId();
+        this._id = shortid.generate();
     }
 
     public getPapers(recursive: boolean, result?: PepperItem[]): PepperItem[] {

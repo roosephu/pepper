@@ -2,7 +2,7 @@ import Axios from "axios";
 import { randomBytes } from "crypto";
 import * as fs from "fs-extra";
 import { join } from "path";
-import { uniqueId } from "./idGen";
+import shortid from "shortid";
 import PepperItem from "./PepperItem";
 
 
@@ -28,10 +28,10 @@ export default class PepperAttachment {
         this.mimeType = mimeType;
         this.title = title;
         this.url = url;
-        this._id = uniqueId();
+        this._id = shortid.generate();
 
         if (paper) {
-            this.entry = `${paper.getCreators()} - ${paper.title}.pdf`;
+            this.entry = `${paper.formattedCreators} - ${paper.title}.pdf`;
         } else {
             this.entry = "paper.pdf";
         }

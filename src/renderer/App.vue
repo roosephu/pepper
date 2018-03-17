@@ -37,7 +37,6 @@
                                     th.four.wide Author
                                     th.collapsing Cite Key
                             tbody
-                                //- draggble(v-model='Library')
                                 PItem(v-for="paper in Library.getCursorPapers(showPapersRec)", :paper="paper", :key="paper._id")
         //- router-view
 </template>
@@ -45,7 +44,6 @@
 <script lang="ts">
 import debug from "debug";
 import Vue from "vue";
-// import Draggable from "vuedraggable";
 import PItem from "./components/PItem.vue";
 import PTree from "./components/PTree.vue";
 import Library from "./pepper";
@@ -59,9 +57,14 @@ import { translate } from "./pepper/translators";
 
 const log = debug("pepper:main");
 
+const paper: any = Library.root.papers[0];
+
+// for (const key of Object.keys(paper)) {
+//     log(key, paper[key]);
+// }
+
 export default Vue.extend({
     components: {
-        // Draggable,
         PItem,
         PTree,
     },

@@ -1,6 +1,6 @@
 import * as fs from "fs-extra";
 import { join } from "path";
-import { uniqueId } from "./idGen";
+import shortid from "shortid";
 import PepperAttachment from "./PepperAttachment";
 
 export class Creator {
@@ -43,10 +43,10 @@ export default class PepperItem {
         this.tags = [];
         this.attachments = [];
         this.done = true;
-        this._id = uniqueId();
+        this._id = shortid.generate();
     }
 
-    public getCreators(): string {
+    get formattedCreators(): string {
         if (this.creators.length > 2) {
             return `${this.creators[0].lastName} et al.`;
         } else if (this.creators.length === 2) {
@@ -65,7 +65,7 @@ export default class PepperItem {
         this.saveAttachments(path);
     }
 
-    public getMainFile(): string {
+    get mainFile(): string {
         // TODO: possibly use priority for each type
         for (const attachment of this.attachments) {
             if (attachment.mimeType === "application/pdf") {

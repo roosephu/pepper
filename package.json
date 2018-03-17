@@ -56,6 +56,7 @@
     "jquery": "^3.3.1",
     "pdfjs-dist": "^2.0.428",
     "semantic-ui": "^2.3.0",
+    "shortid": "^2.2.8",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vuex": "^3.0.1"
@@ -65,6 +66,7 @@
     "@types/fs-extra": "^5.0.1",
     "@types/jquery": "^3.3.1",
     "@types/semantic-ui": "^2.2.6",
+    "@types/shortid": "0.0.29",
     "@types/vue-router": "^2.0.0",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
