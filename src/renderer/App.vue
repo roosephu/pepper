@@ -42,16 +42,16 @@
 </template>
 
 <script lang="ts">
-import debug from "debug";
-import Vue from "vue";
-import PItem from "./components/PItem.vue";
-import PTree from "./components/PTree.vue";
-import Library from "./pepper";
-import PepperFolder from "./pepper/PepperFolder";
-import PepperItem from "./pepper/PepperItem";
+import PItem from "@/components/PItem.vue";
+import PTree from "@/components/PTree.vue";
+import Library from "@/pepper";
+import PepperFolder from "@/pepper/PepperFolder";
+import PepperItem from "@/pepper/PepperItem";
 // import PDFJS from 'pdfjs-dist'
 // import axios from 'axios'
-import { translate } from "./pepper/translators";
+import { translate } from "@/pepper/translators";
+import debug from "debug";
+import Vue from "vue";
 
 // PDFJS.GlobalWorkerOptions.workerSrc = 'pdf.worker.js'
 

@@ -27,6 +27,13 @@ export default class PepperFolder {
     }
 
     public addItem(paper: PepperItem) {
+        if (paper.parent) {
+            if (paper.parent !== this) {
+                paper.parent.removeItem(paper);
+            } else {
+                return;
+            }
+        }
         this.papers.push(paper);
         paper.parent = this;
     }

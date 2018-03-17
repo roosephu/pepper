@@ -12,9 +12,9 @@
 </template>
 
 <script lang="ts">
+import PepperItem from "@/pepper/PepperItem";
 import debug from "debug";
 import Vue from "vue";
-import PepperItem from "../pepper/PepperItem";
 
 const log = debug("pepper:PItem");
 
@@ -35,6 +35,7 @@ export default Vue.extend({
         drag(event: DragEvent) {
             // log(event, this);
             event.dataTransfer.setData("item", this.paper._id);
+            this.$drag.src = this.paper;
         },
     },
 

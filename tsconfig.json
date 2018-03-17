@@ -9,8 +9,8 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "*": ["node_modules/*"],
-      "@": ["src/renderer"],
+      "@/*": ["src/renderer/*"],
+      "*": ["node_modules/*"]
     }
   },
   "lib": [ "es2017.object", "ES2015" ],

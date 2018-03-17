@@ -49,8 +49,7 @@ export default class PepperLibrary {
         return this.composePath("db.json");
     }
 
-    public moveTo(paper: PepperItem, folder: PepperFolder) {
-        paper.parent.removeItem(paper);
-        folder.addItem(paper);
-    }
+    // public findItemById(_id: string): PepperItem {
+    //     if
+    // }
 }

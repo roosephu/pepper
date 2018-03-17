@@ -53,6 +53,10 @@ export default Library;
 
 function install(Vue: VueConstructor<_Vue>) {
     Vue.prototype.$pepper = Library;
+    Vue.prototype.$drag = {
+        dst: null,
+        src: null,
+    };
 }
 
 export { install };
