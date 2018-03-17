@@ -2,6 +2,7 @@ import * as fs from "fs-extra";
 import { join } from "path";
 import shortid from "shortid";
 import PepperAttachment from "./PepperAttachment";
+import PepperFolder from "./PepperFolder";
 
 export class Creator {
     public firstName: string;
@@ -35,6 +36,7 @@ export default class PepperItem {
     public done: boolean;
     public citeKey: string;
     public _id: string;
+    public parent: PepperFolder;
 
     constructor(itemType: string) {
         this.itemType = itemType;

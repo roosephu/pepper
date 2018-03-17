@@ -50,10 +50,8 @@ export default Vue.extend({
         },
 
         addSubfolder() {
-            // console.log("???");
             const subdir = new PepperFolder("untitled");
-            subdir.parent = this.folder;
-            this.folder.subdirs.push(subdir);
+            this.folder.addFolder(subdir);
         },
 
         remove() {

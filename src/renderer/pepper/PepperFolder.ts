@@ -26,33 +26,21 @@ export default class PepperFolder {
         return result;
     }
 
-    public dump(): any {
-        return { subdirs: this.subdirs.map((x) => x.dump()), papers: this.papers, name: this.name };
-        // const subdirs: {[key: string]: any} = {};
-        // for (const [name, subdir] of Object.entries(subdirs)) {
-        //     subdirs[name] = subdir.dump();
-        // }
-        // return {subdirs, papers: this.papers};
-    }
-
-    public load(x: any) {
-        this.papers = x.papers.map((t: any) => Object.assign(new PepperItem(t.itemType), t));
-        this.subdirs = [];
-        this.name = x.name;
-        for (const subdir of x.subdirs) {
-            const sub = new PepperFolder(subdir.name);
-            sub.load(subdir);
-            sub.parent = this;
-            this.subdirs.push(sub);
-        }
-    }
-
     public addItem(paper: PepperItem) {
         this.papers.push(paper);
+        paper.parent = this;
     }
 
     public addFolder(subdir: PepperFolder) {
-        //
+        this.subdirs.push(subdir);
+        subdir.parent = this;
+    }
+
+    public removeItem(paper: PepperItem) {
+        const index = this.papers.indexOf(paper);
+        if (index !== -1) {
+            this.papers.splice(index, 1);
+        }
     }
 
     public removeFolder(subdir: PepperFolder) {

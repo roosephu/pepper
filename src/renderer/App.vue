@@ -57,12 +57,6 @@ import { translate } from "./pepper/translators";
 
 const log = debug("pepper:main");
 
-const paper: any = Library.root.papers[0];
-
-// for (const key of Object.keys(paper)) {
-//     log(key, paper[key]);
-// }
-
 export default Vue.extend({
     components: {
         PItem,

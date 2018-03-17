@@ -10,22 +10,29 @@ export function serialize(obj: any, constructors: {[name: string]: any}): string
         if (x instanceof Array) { return x.map(clean); }
         if (typeof x !== "object") { return x; }
         const $type = x.constructor.name;
-        if (constructors[$type] && !x._id) {
+        const shouldCache = constructors[$type];
+
+        if (shouldCache && !x._id) {
             x._id = shortid.generate();
         }
 
         const { _id } = x;
-        if (db[_id]) { return db[_id]; }
-
         const ret: any = Object.assign({}, x);
+        if (shouldCache) {
+            if (db[_id]) {
+                return { _id, $type };
+            } else {
+                // placeholder
+                db[_id] = ret;
+            }
+        }
 
         for (const key of Object.keys(ret)) {
             ret[key] = clean(ret[key]);
         }
 
-        if (_id) {
-            db[_id] = ret;
-            return { _id, $type: x.constructor.name };
+        if (shouldCache) {
+            return { _id, $type };
         } else {
             return ret;
         }
@@ -44,11 +51,18 @@ export function deserialize(str: string, constructors: {[name: string]: any}): a
         if (typeof x !== "object") { return x; }
         const { _id, $type } = x;
 
-        if (_id && $type && cache[_id]) {
-            return cache[_id];
+        const shouldCache = _id && $type;
+
+        if (shouldCache) {
+            if (cache[_id]) {
+                return cache[_id];
+            } else {
+                // put a placeholder here to prevent recurrence.
+                cache[_id] = new constructors[$type]();
+            }
         }
 
-        const ret = $type && _id ? db[_id] : x;
+        const ret = shouldCache ? db[_id] : x;
         for (const key of Object.keys(ret)) {
             ret[key] = construct(ret[key]);
         }
@@ -56,8 +70,7 @@ export function deserialize(str: string, constructors: {[name: string]: any}): a
             if (!constructors[$type]) {
                 log(`detected $type=${$type} but no constructor found`);
             }
-            cache[_id] = Object.assign(new constructors[$type](), ret);
-            return cache[_id];
+            return cache[_id] = Object.assign(cache[_id], ret);
         } else {
             return ret;
         }
