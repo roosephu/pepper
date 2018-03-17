@@ -27,6 +27,9 @@ export default class PepperLibrary {
     }
 
     public async add(paper: PepperItem) {
+        if (!paper) {
+            return;
+        }
         // console.log(paper);
         if (!paper.citeKey) {
             paper.citeKey = this.citer.getCiteKey(paper);
@@ -47,6 +50,16 @@ export default class PepperLibrary {
 
     get dbPath() {
         return this.composePath("db.json");
+    }
+
+    get structure(): any {
+        function dfs(x: PepperFolder): any {
+            return {
+                name: x.name,
+                subdirs: x.subdirs.map(dfs),
+            };
+        }
+        return dfs(this.root);
     }
 
     // public findItemById(_id: string): PepperItem {

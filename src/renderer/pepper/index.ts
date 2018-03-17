@@ -20,14 +20,13 @@ const constructors = {
     PepperLibrary,
 };
 
-
 const libraryPath = join(remote.app.getPath("appData"), "Pepper", "Library");
 
-if (!fs.existsSync(libraryPath)) {
-    fs.mkdirpSync(libraryPath);
-}
-
 function readDisk() {
+    if (!fs.existsSync(libraryPath)) {
+        fs.mkdirpSync(libraryPath);
+    }
+
     const { Library } = localStorage;
     if (Library) {
         log("Read from disk.");
@@ -39,6 +38,8 @@ function readDisk() {
 }
 
 const Library = readDisk();
+
+import "./server";
 
 function writeDisk() {
     localStorage.Library = serialize(Library, constructors);

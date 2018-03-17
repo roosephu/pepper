@@ -38,7 +38,6 @@
                                     th.collapsing Cite Key
                             tbody
                                 PItem(v-for="paper in Library.getCursorPapers(showPapersRec)", :paper="paper", :key="paper._id")
-        //- router-view
 </template>
 
 <script lang="ts">

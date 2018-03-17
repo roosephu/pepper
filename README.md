@@ -25,4 +25,3 @@ npm run build
 4. Export.
 5. BibTeX support.
 6. Browser extensions (possibly together with a server).
-7. Drag and drop

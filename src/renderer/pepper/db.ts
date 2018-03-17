@@ -76,4 +76,5 @@ export function deserialize(str: string, constructors: {[name: string]: any}): a
         }
     }
     return construct(root);
+    // return { root: construct(root), cache };
 }

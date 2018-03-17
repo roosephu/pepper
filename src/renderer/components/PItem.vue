@@ -1,11 +1,11 @@
 <template lang="pug">
-    tr(draggable="true", @dragstart="drag")
+    tr
         td
             //- i.white.icon.calendar.online
             .ui.checkbox.fitted
-                input(type="checkbox", v-model="paper.done")
+                input(type="checkbox" v-model="paper.done")
             //- i.icon.calendar.check(:class="{'online': !thi}")
-        td(@dblclick="open(paper)")
+        td(@dblclick="open(paper)" draggable="true" @dragstart="drag")
             a(v-editable="paper.title")
         td {{paper.formattedCreators}}
         td {{paper.citeKey}}
@@ -40,7 +40,6 @@ export default Vue.extend({
     },
 
     mounted() {
-        //
         $(".checkbox").checkbox();
     },
 });
