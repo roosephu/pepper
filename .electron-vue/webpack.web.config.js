@@ -11,6 +11,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 let webConfig = {
+  mode: process.env.NODE_ENV || 'development',
   devtool: '#cheap-module-eval-source-map',
   entry: {
     web: path.join(__dirname, '../src/renderer/main.ts')
@@ -66,6 +67,14 @@ let webConfig = {
             name: 'fonts/[name].[ext]'
           }
         }
+      },
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+        }
       }
     ]
   },
@@ -97,7 +106,7 @@ let webConfig = {
       'vue$': 'vue/dist/vue.esm.js',
       semantic: path.join(__dirname, '../semantic')
     },
-    extensions: ['.js', '.vue', '.json', '.css']
+    extensions: ['.ts', '.js', '.vue', '.json', '.css']
   },
   target: 'web'
 }
