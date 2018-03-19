@@ -100,5 +100,9 @@ export default class PepperItem {
             }
         `;
     }
+
+    public remote(): void {
+        //
+    }
 }
 
