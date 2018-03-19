@@ -12,13 +12,13 @@ import PepperLibrary from "./PepperLibrary";
 
 const log = debug("pepper:core");
 
-const constructors = {
+const constructors = [
     PepperAttachment,
     PepperCiter,
     PepperFolder,
     PepperItem,
     PepperLibrary,
-};
+];
 
 const libraryPath = join(remote.app.getPath("appData"), "Pepper", "Library");
 

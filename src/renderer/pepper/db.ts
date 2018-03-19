@@ -3,14 +3,24 @@ import shortid from "shortid";
 
 const log = debug("pepper:db");
 
-export function serialize(obj: any, constructors: {[name: string]: any}): string {
+function getNameMap(constructors: any[]): {[key: string]: any} {
+    const mapConstructors: {[key: string]: () => void} = {};
+    for (const c of constructors) {
+        mapConstructors[c.name] = c;
+    }
+    return mapConstructors;
+}
+
+export function serialize(obj: any, constructors: any[]): string {
     const db: {[_id: string]: any} = {};
+    const nameMap = getNameMap(constructors);
 
     function clean(x: any): any {
         if (x instanceof Array) { return x.map(clean); }
         if (typeof x !== "object") { return x; }
         const $type = x.constructor.name;
-        const shouldCache = constructors[$type];
+        // log($type, x);
+        const shouldCache = nameMap[$type];
 
         if (shouldCache && !x._id) {
             x._id = shortid.generate();
@@ -42,9 +52,11 @@ export function serialize(obj: any, constructors: {[name: string]: any}): string
     return JSON.stringify({ db, root });
 }
 
-export function deserialize(str: string, constructors: {[name: string]: any}): any {
+export function deserialize(str: string, constructors: any[]): any {
     const { db, root } = JSON.parse(str);
     const cache: {[key: string]: any} = {};
+
+    const nameMap = getNameMap(constructors);
 
     function construct(x: any): any {
         if (x instanceof Array) { return x.map(construct); }
@@ -58,7 +70,7 @@ export function deserialize(str: string, constructors: {[name: string]: any}): a
                 return cache[_id];
             } else {
                 // put a placeholder here to prevent recurrence.
-                cache[_id] = new constructors[$type]();
+                cache[_id] = new nameMap[$type]();
             }
         }
 
@@ -67,7 +79,7 @@ export function deserialize(str: string, constructors: {[name: string]: any}): a
             ret[key] = construct(ret[key]);
         }
         if (_id && $type) {
-            if (!constructors[$type]) {
+            if (!nameMap[$type]) {
                 log(`detected $type=${$type} but no constructor found`);
             }
             return cache[_id] = Object.assign(cache[_id], ret);
