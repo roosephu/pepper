@@ -1,25 +1,35 @@
+import debug from "debug";
+import dedent from "dedent";
 import * as fs from "fs-extra";
 import { join } from "path";
 import shortid from "shortid";
 import PepperAttachment from "./PepperAttachment";
 import PepperFolder from "./PepperFolder";
 
-export class Creator {
+const log = debug("pepper:item");
+
+export class PepperCreator {
     public firstName: string;
     public lastName: string;
     public creatorType: string;
+    public _id: string;
 
     constructor(firstName: string, lastName: string, creatorType?: string) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.creatorType = creatorType;
+        this._id = shortid.generate();
+    }
+
+    public _(): string {
+        return `${this.lastName}, ${this.firstName}`;
     }
 }
 
 export default class PepperItem {
     public itemType: string;
     public title: string;
-    public creators: Creator[];
+    public creators: PepperCreator[];
     public date: string;
     public abstractNote: string;
     public notes: any[];
@@ -75,6 +85,20 @@ export default class PepperItem {
             }
         }
         return undefined;
+    }
+
+    get bibTeX(): string {
+        const authors = this.creators.map((x) => x._()).join(" and ");
+        // log(authors);
+        return dedent`
+            @article{${this.citeKey},
+                abstract = {${this.abstractNote}},
+                date = {${this.date}},
+                author = {${authors}},
+                title = {${this.title}},
+                url = {${this.url}},
+            }
+        `;
     }
 }
 

@@ -7,7 +7,7 @@ import { deserialize, serialize } from "./db";
 import PepperAttachment from "./PepperAttachment";
 import PepperCiter from "./PepperCiter";
 import PepperFolder from "./PepperFolder";
-import PepperItem from "./PepperItem";
+import PepperItem, { PepperCreator } from "./PepperItem";
 import PepperLibrary from "./PepperLibrary";
 
 const log = debug("pepper:core");
@@ -18,11 +18,12 @@ const constructors = [
     PepperFolder,
     PepperItem,
     PepperLibrary,
+    PepperCreator,
 ];
 
 const libraryPath = join(remote.app.getPath("appData"), "Pepper", "Library");
 
-function readDisk() {
+function readDisk(): PepperLibrary {
     if (!fs.existsSync(libraryPath)) {
         fs.mkdirpSync(libraryPath);
     }
@@ -41,11 +42,16 @@ const Library = readDisk();
 
 import "./server";
 
-function writeDisk() {
+function writeDisk(): void {
     localStorage.Library = serialize(Library, constructors);
     // const db = JSON.stringify(this.dump(), null, 2);
     // await fs.writeFile(join(this.path, "db.json"), db);
-    log("Write to disk.");
+    log("Write database to disk.");
+
+    const bibTeX = Library.getPapers(true).map((x) => x.bibTeX).join("\n\n");
+    const path = Library.composePath("cite.bib");
+    fs.writeFileSync(path, bibTeX);
+    log(`Write bibTeX to ${path}`);
 }
 
 setInterval(() => writeDisk, 60000);

@@ -40,7 +40,7 @@ export default class PepperCiter {
         for (let T = 0; T <= 10; ++T) {
             const suffix = String.fromCharCode(...index.map((x) => x + 97));
             const key = prefix + suffix;
-            log(prefix, suffix, key, index);
+            // log(prefix, suffix, key, index);
 
             if (!this.citeKeys[key]) {
                 return key;
