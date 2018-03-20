@@ -9,7 +9,7 @@ import { remote } from "electron";
 import * as fs from "fs-extra";
 import { join } from "path";
 import _Vue, { VueConstructor } from "vue";
-import { deserialize, Model, serialize } from "./db";
+import database, { deserialize, Model, serialize } from "./db";
 
 const log = debug("pepper:core");
 
@@ -50,8 +50,6 @@ function readDisk(): PepperLibrary {
 
 const Library = readDisk();
 
-log({ Library });
-
 import "./server";
 
 function writeDisk(): void {
@@ -72,6 +70,7 @@ export default Library;
 
 function install(Vue: VueConstructor<_Vue>) {
     Vue.prototype.$pepper = Library;
+    Vue.prototype.$db = database;
     Vue.prototype.$drag = {
         dst: null,
         src: null,

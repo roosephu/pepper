@@ -13,12 +13,17 @@
                 .row
                     .sixteen.wide.column
                         .ui.form#urlForm
-                            .ui.two.fields
-                                .fourteen.wide.field
+                            .ui.four.fields
+                                .nine.wide.field
                                     .ui.input.fluid
                                         input(type='text', name='url', placeholder='URL')
                                 .two.wide.field
                                     a.ui.button.primary.submit Add
+                                .four.wide.field
+                                    .ui.input.field
+                                        input(type='text', name='search', placeholder='Search...', v-model='filter.title.$contain')
+                                //- .two.wide.field
+                                //-     a.ui.button.primary.submit Search
 
                 .row
                     .four.wide.column
@@ -37,13 +42,14 @@
                                     th.four.wide Author
                                     th.collapsing Cite Key
                             tbody
-                                PItem(v-for="paper in Library.getCursorPapers(showPapersRec)", :paper="paper", :key="paper._id")
+                                PItem(v-for="paper in filteredPapers", :paper="paper", :key="paper._id")
 </template>
 
 <script lang="ts">
 import PItem from "@/components/PItem.vue";
 import PTree from "@/components/PTree.vue";
 import Library from "@/pepper";
+import { checkFilter } from "@/pepper/db";
 import PepperFolder from "@/pepper/PepperFolder";
 import PepperItem from "@/pepper/PepperItem";
 // import PDFJS from 'pdfjs-dist'
@@ -56,7 +62,7 @@ import Vue from "vue";
 
 const log = debug("pepper:main");
 
-export default Vue.extend({
+export default {
     components: {
         PItem,
         PTree,
@@ -67,27 +73,32 @@ export default Vue.extend({
     data() {
         return {
             Library,
+            filter: { title: { $contain: "" } },
             showPapersRec: true,
         }; // enable Vue to track Library
     },
 
     methods: {
-        async submit(url: string) {
+        async submit(this: Vue, url: string) {
             await this.$pepper.add(await translate(url));
         },
 
     },
 
     computed: {
-        allPapers(): PepperItem[] {
-            return this.$pepper.getPapers();
+        allPapers(this: Vue): PepperItem[] {
+            return this.$pepper.getPapers(true);
         },
 
+        filteredPapers(): PepperItem[] {
+            const filter = this.filter;
+            return this.Library.getCursorPapers(this.showPapersRec).filter((x: any) => checkFilter(x, filter));
+        },
     },
 
-    mounted() {
+    mounted(this: Vue) {
         this.$nextTick(() => {
-            const $this = this;
+            const $this: any = this;
             $(".checkbox").checkbox();
 
             $("#urlForm").form({
@@ -99,7 +110,7 @@ export default Vue.extend({
             });
         });
     },
-});
+};
 
 </script>
 

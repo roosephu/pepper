@@ -7,21 +7,22 @@
             //- i.icon.calendar.check(:class="{'online': !thi}")
         td(@dblclick="open(paper)" draggable="true" @dragstart="drag")
             a(v-editable="paper.title")
-        td {{paper.formattedCreators}}
+        td {{paper.$formattedCreators}}
         td {{paper.citeKey}}
 </template>
 
 <script lang="ts">
+// import { editable } from "@/editable";
 import PepperItem from "@/pepper/PepperItem";
 import debug from "debug";
-import { remote } from "electron";
+import { remote, shell } from "electron";
 import Vue from "vue";
 
 const log = debug("pepper:PItem");
 
 export default Vue.extend({
     props: {
-        paper: Object,
+        paper: PepperItem,
     },
 
     methods: {
@@ -29,7 +30,7 @@ export default Vue.extend({
             // log("dblclick");
             const attachment = paper.$mainFile;
             if (attachment) {
-                this.$electron.shell.openItem(this.$pepper.composePath(attachment));
+                shell.openItem(this.$pepper.composePath(attachment));
             }
         },
 
@@ -57,4 +58,5 @@ export default Vue.extend({
         $(".checkbox").checkbox();
     },
 });
+
 </script>

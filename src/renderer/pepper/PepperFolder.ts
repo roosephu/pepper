@@ -17,7 +17,6 @@ export default class PepperFolder {
         this._id = shortid.generate();
     }
 
-
     public getPapers(recursive: boolean, result?: PepperItem[]): PepperItem[] {
         result = result || [];
         result.push(...this.papers.map((x) => x.$));

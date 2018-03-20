@@ -8,6 +8,7 @@
     "baseUrl": ".",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "paths": {
       "@/*": ["src/renderer/*"],
       "*": ["node_modules/*"]
