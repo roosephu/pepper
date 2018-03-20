@@ -8,15 +8,15 @@
         //- .ui.header(@dragstart="drag" draggable="true" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave" :class="{border: candidate}")
         i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='toggleFolding')
         .floated.content(@dblclick='gotoCursor')
-            .ui.text.bold(v-editable="folder.name" :class="{blue: folder == $pepper.cursor, border: isCandidate}" @contextmenu="popup"
+            .ui.text.bold(v-editable="folder.name" :class="{blue: folder == $pepper.cursor.$, border: isCandidate}" @contextmenu="popup"
                           @dragstart="drag" draggable="true" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave" @dragover.prevent="") {{folder.name}}
 
         .list(v-if='!folded && hasSubfolders')
-            PTree(v-for="subdir in folder.subdirs", :folder="subdir", :key="subdir._id")
+            PTree(v-for="subdir in folder.subdirs", :folder="subdir.$", :key="subdir._id")
 </template>
 
 <script lang="ts">
-import PepperFolder from "@/pepper/PepperFolder";
+import PepperFolder, { modelFolder } from "@/pepper/PepperFolder";
 import PepperItem from "@/pepper/PepperItem";
 import debug from "debug";
 import { MenuItemConstructorOptions, remote } from "electron";
@@ -28,7 +28,7 @@ export default Vue.extend({
     name: "PTree",
 
     props: {
-        folder: Object,
+        folder: PepperFolder,
     },
 
     data() {
@@ -51,7 +51,7 @@ export default Vue.extend({
         },
 
         addSubfolder() {
-            const subdir = new PepperFolder("untitled");
+            const subdir: PepperFolder = modelFolder.new("untitled").$;
             this.folder.addFolder(subdir);
         },
 
@@ -62,7 +62,7 @@ export default Vue.extend({
         },
 
         gotoCursor() {
-            this.$pepper.cursor = this.folder;
+            this.$pepper.cursor = this.folder.$ref;
         },
 
         popup() {

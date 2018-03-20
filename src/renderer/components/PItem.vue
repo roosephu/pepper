@@ -27,7 +27,7 @@ export default Vue.extend({
     methods: {
         open(paper: PepperItem) {
             // log("dblclick");
-            const attachment = paper.mainFile;
+            const attachment = paper.$mainFile;
             if (attachment) {
                 this.$electron.shell.openItem(this.$pepper.composePath(attachment));
             }

@@ -1,3 +1,5 @@
+import { Model, Ref } from "@/pepper/db";
+import PepperCreator from "@/pepper/PepperCreator";
 import debug from "debug";
 import dedent from "dedent";
 import * as fs from "fs-extra";
@@ -8,28 +10,10 @@ import PepperFolder from "./PepperFolder";
 
 const log = debug("pepper:item");
 
-export class PepperCreator {
-    public firstName: string;
-    public lastName: string;
-    public creatorType: string;
-    public _id: string;
-
-    constructor(firstName: string, lastName: string, creatorType?: string) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.creatorType = creatorType;
-        this._id = shortid.generate();
-    }
-
-    public _(): string {
-        return `${this.lastName}, ${this.firstName}`;
-    }
-}
-
 export default class PepperItem {
     public itemType: string;
     public title: string;
-    public creators: PepperCreator[];
+    public creators: Array<Ref<PepperCreator>>;
     public date: string;
     public abstractNote: string;
     public notes: any[];
@@ -38,7 +22,7 @@ export default class PepperItem {
     public url: string;
     public publicationTitle: string;
     public extra: string;
-    public attachments: PepperAttachment[];
+    public attachments: Array<Ref<PepperAttachment>>;
     public volume: string;
     public issue: string;
     public pages: string;
@@ -46,7 +30,8 @@ export default class PepperItem {
     public done: boolean;
     public citeKey: string;
     public _id: string;
-    public parent: PepperFolder;
+    public $ref: Ref<PepperItem>;
+    public parent: Ref<PepperFolder>;
 
     constructor(itemType: string) {
         this.itemType = itemType;
@@ -55,40 +40,39 @@ export default class PepperItem {
         this.tags = [];
         this.attachments = [];
         this.done = true;
-        this._id = shortid.generate();
     }
 
-    get formattedCreators(): string {
+    get $formattedCreators(): string {
         if (this.creators.length > 2) {
-            return `${this.creators[0].lastName} et al.`;
+            return `${this.creators[0].$.lastName} et al.`;
         } else if (this.creators.length === 2) {
-            return `${this.creators[0].lastName} and ${this.creators[1].lastName}`;
+            return `${this.creators[0].$.lastName} and ${this.creators[1].$.lastName}`;
         } else if (this.creators.length === 1) {
-            return this.creators[0].lastName;
+            return this.creators[0].$.lastName;
         }
         return "";
     }
 
     public async saveAttachments(path: string) {
-        await Promise.all(this.attachments.map((x) => x.save(path, this)));
+        await Promise.all(this.attachments.map((x) => x.$.save(path, this)));
     }
 
     public async writeDisk(path: string) {
         this.saveAttachments(path);
     }
 
-    get mainFile(): string {
+    get $mainFile(): string {
         // TODO: possibly use priority for each type
         for (const attachment of this.attachments) {
-            if (attachment.mimeType === "application/pdf") {
-                return join(attachment._id, attachment.entry);
+            if (attachment.$.mimeType === "application/pdf") {
+                return join(attachment._id, attachment.$.entry);
             }
         }
         return undefined;
     }
 
     get bibTeX(): string {
-        const authors = this.creators.map((x) => x._()).join(" and ");
+        const authors = this.creators.map((x) => x.$._()).join(" and ");
         // log(authors);
         return dedent`
             @article{${this.citeKey},
@@ -106,3 +90,4 @@ export default class PepperItem {
     }
 }
 
+export const modelItem = new Model<PepperItem>("item", PepperItem);

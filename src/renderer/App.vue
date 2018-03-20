@@ -23,7 +23,7 @@
                 .row
                     .four.wide.column
                         .ui.list
-                            PTree(:folder="Library.root")
+                            PTree(:folder="Library.root.$")
                     .twelve.wide.column
                         .ui.checkbox
                             input(type='checkbox', v-model="showPapersRec")

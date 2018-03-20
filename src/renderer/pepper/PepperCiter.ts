@@ -1,3 +1,4 @@
+import { Model, Ref } from "@/pepper/db";
 import debug from "debug";
 import shortid from "shortid";
 import PepperItem from "./PepperItem";
@@ -9,20 +10,19 @@ const log = debug("pepper:citer");
 export default class PepperCiter {
     public citeKeys: {[key: string]: boolean};
     public _id: string;
+    public $ref: Ref<PepperCiter>;
 
     constructor() {
-        // dd
         this.citeKeys = {};
-        this._id = shortid.generate();
     }
 
     public getCiteKey(paper: PepperItem): string {
         let prefix = "";
         if (paper.creators.length === 1) {
-            const lastName = paper.creators[0].lastName;
+            const lastName = paper.creators[0].$.lastName;
             prefix += lastName;
         } else {
-            const lastNameInitials = paper.creators.map((x) => x.lastName.charAt(0)).join("");
+            const lastNameInitials = paper.creators.map((x) => x.$.lastName.charAt(0)).join("");
             prefix += lastNameInitials;
         }
         if (paper.date) {
@@ -65,3 +65,6 @@ export default class PepperCiter {
         return "???";
     }
 }
+
+export const modelCiter = new Model<PepperCiter>("citer", PepperCiter);
+

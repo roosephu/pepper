@@ -1,25 +1,34 @@
+import { modelAttachment } from "@/pepper/PepperAttachment";
+import { modelCiter } from "@/pepper/PepperCiter";
+import { modelCreator } from "@/pepper/PepperCreator";
+import { modelFolder } from "@/pepper/PepperFolder";
+import { modelItem } from "@/pepper/PepperItem";
+import PepperLibrary, { modelLibrary } from "@/pepper/PepperLibrary";
 import debug from "debug";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import { join } from "path";
 import _Vue, { VueConstructor } from "vue";
-import { deserialize, serialize } from "./db";
-import PepperAttachment from "./PepperAttachment";
-import PepperCiter from "./PepperCiter";
-import PepperFolder from "./PepperFolder";
-import PepperItem, { PepperCreator } from "./PepperItem";
-import PepperLibrary from "./PepperLibrary";
+import { deserialize, Model, serialize } from "./db";
 
 const log = debug("pepper:core");
 
-const constructors = [
-    PepperAttachment,
-    PepperCiter,
-    PepperFolder,
-    PepperItem,
-    PepperLibrary,
-    PepperCreator,
-];
+function arrayToObj(pairs: Array<[string, any]>): any {
+    const ret: {[key: string]: any} = {};
+    for (const [key, value] of pairs) {
+        ret[key] = value;
+    }
+    return ret;
+}
+
+const models: {[key: string]: any} = arrayToObj(([
+    modelAttachment,
+    modelCiter,
+    modelCreator,
+    modelFolder,
+    modelItem,
+    modelLibrary,
+]).map((x) => [x.name, x] as [string, any]));
 
 const libraryPath = join(remote.app.getPath("appData"), "Pepper", "Library");
 
@@ -31,19 +40,22 @@ function readDisk(): PepperLibrary {
     const { Library } = localStorage;
     if (Library) {
         log("Read from disk.");
-        return deserialize(Library, constructors);
+        return deserialize(Library, models);
     } else {
         log("New library");
-        return new PepperLibrary(libraryPath);
+        // return new PepperLibrary(libraryPath);
+        return modelLibrary.new(libraryPath).$;
     }
 }
 
 const Library = readDisk();
 
+log({ Library });
+
 import "./server";
 
 function writeDisk(): void {
-    localStorage.Library = serialize(Library, constructors);
+    localStorage.Library = serialize(Library.$ref);
     // const db = JSON.stringify(this.dump(), null, 2);
     // await fs.writeFile(join(this.path, "db.json"), db);
     log("Write database to disk.");

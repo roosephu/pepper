@@ -1,7 +1,7 @@
 import axios from "axios";
 import { registerTranslator } from ".";
-import PepperAttachment from "../PepperAttachment";
-import PepperItem from "../PepperItem";
+import PepperAttachment, { modelAttachment } from "../PepperAttachment";
+import PepperItem, { modelItem } from "../PepperItem";
 import * as U from "./utils";
 
 async function parse(doc: Document, url: string): Promise<PepperItem> {
@@ -32,7 +32,7 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
         xsi: "http://www.w3.org/2001/XMLSchema-instance",
     };
 
-    const newItem = new PepperItem("journalArticle");
+    const newItem = modelItem.new("journalArticle").$;
     const xml = new DOMParser().parseFromString(metadata, "text/xml");
     const dcMeta = U.xpathMatch(xml, "//n:GetRecord/n:record/n:metadata/oai_dc:dc", ns)[0];
     newItem.title = getXPathNodeTrimmed(dcMeta, "dc:title", ns);
@@ -71,13 +71,13 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
 
     newItem.extra = `arXiv: ${articleID}`;
 
-    newItem.attachments.push(new PepperAttachment(
+    newItem.attachments.push(modelAttachment.new(
         "application/pdf",
         `arXiv:${articleID} PDF`,
         `http://www.arxiv.org/pdf/${articleID}.pdf`,
         newItem,
     ));
-    newItem.attachments.push(new PepperAttachment(
+    newItem.attachments.push(modelAttachment.new(
         "text/html",
         "arXiv.org Snapshot",
         newItem.url,

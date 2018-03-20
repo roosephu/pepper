@@ -1,25 +1,27 @@
+import { Model, Ref } from "@/pepper/db";
 import debug from "debug";
 import { remote } from "electron";
 import { join } from "path";
-import PepperCiter from "./PepperCiter";
-import PepperFolder from "./PepperFolder";
+import PepperCiter, { modelCiter } from "./PepperCiter";
+import PepperFolder, { modelFolder } from "./PepperFolder";
 import PepperItem from "./PepperItem";
 
 const log = debug("pepper:Library");
 
 export default class PepperLibrary {
-    public root: PepperFolder;
-    public cursor: PepperFolder;
-    public citer: PepperCiter;
-    // public papers: PepperItem[];
+    public root: Ref<PepperFolder>;
+    public cursor: Ref<PepperFolder>;
+    public citer: Ref<PepperCiter>;
     public path: string;
+    public _id: string;
+    public $ref: Ref<PepperLibrary>;
 
     constructor(path: string) {
         // console.log("main path", this.path);
         this.path = path;
-        this.root = new PepperFolder("Library");
+        this.root = modelFolder.new("Library");
         this.cursor = this.root;
-        this.citer = new PepperCiter();
+        this.citer = modelCiter.new();
     }
 
     public composePath(suf: string): string {
@@ -32,20 +34,20 @@ export default class PepperLibrary {
         }
         // console.log(paper);
         if (!paper.citeKey) {
-            paper.citeKey = this.citer.getCiteKey(paper);
+            paper.citeKey = this.citer.$.getCiteKey(paper);
         }
-        this.cursor.addItem(paper);
+        this.cursor.$.addItem(paper);
         await paper.writeDisk(this.path);
         // await this.writeDisk();
     }
 
     public getPapers(recursive: boolean): PepperItem[] {
-        return this.root.getPapers(recursive);
+        return this.root.$.getPapers(recursive);
         // return this.papers;
     }
 
     public getCursorPapers(recursive: boolean): PepperItem[] {
-        return this.cursor.getPapers(recursive);
+        return this.cursor.$.getPapers(recursive);
     }
 
     get dbPath() {
@@ -53,10 +55,10 @@ export default class PepperLibrary {
     }
 
     get structure(): any {
-        function dfs(x: PepperFolder): any {
+        function dfs(x: Ref<PepperFolder>): any {
             return {
-                name: x.name,
-                subdirs: x.subdirs.map(dfs),
+                name: x.$.name,
+                subdirs: x.$.subdirs.map(dfs),
             };
         }
         return dfs(this.root);
@@ -66,3 +68,5 @@ export default class PepperLibrary {
     //     if
     // }
 }
+
+export const modelLibrary = new Model<PepperLibrary>("library", PepperLibrary);

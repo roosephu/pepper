@@ -1,3 +1,4 @@
+import { Model, Ref } from "@/pepper/db";
 import Axios from "axios";
 import { randomBytes } from "crypto";
 import * as fs from "fs-extra";
@@ -22,6 +23,7 @@ export default class PepperAttachment {
     public title: string;
     public url: string;
     public _id: string;
+    public $ref: Ref<PepperAttachment>;
     public entry: string;
 
     constructor(mimeType: string, title: string, url: string, paper?: PepperItem) {
@@ -31,7 +33,7 @@ export default class PepperAttachment {
         this._id = shortid.generate();
 
         if (paper) {
-            this.entry = `${paper.formattedCreators} - ${paper.title}.pdf`;
+            this.entry = `${paper.$formattedCreators} - ${paper.title}.pdf`;
         } else {
             this.entry = "paper.pdf";
         }
@@ -48,4 +50,8 @@ export default class PepperAttachment {
             await saveBlobToFile(join(path, this.entry), data.data);
         }
     }
+
 }
+
+export const modelAttachment = new Model<PepperAttachment>("attachment", PepperAttachment);
+
