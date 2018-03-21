@@ -21,7 +21,7 @@
                                     a.ui.button.primary.submit Add
                                 .four.wide.field
                                     .ui.input.field
-                                        input(type='text', name='search', placeholder='Search...', v-model='filter.title.$contain')
+                                        input#search(type='text', name='search', placeholder='Search...', v-model='filter.title.$regex')
                                 //- .two.wide.field
                                 //-     a.ui.button.primary.submit Search
 
@@ -56,6 +56,7 @@ import PepperItem from "@/pepper/PepperItem";
 // import axios from 'axios'
 import { translate } from "@/pepper/translators";
 import debug from "debug";
+import { remote } from "electron";
 import Vue from "vue";
 
 // PDFJS.GlobalWorkerOptions.workerSrc = 'pdf.worker.js'
@@ -73,7 +74,7 @@ export default {
     data() {
         return {
             Library,
-            filter: { title: { $contain: "" } },
+            filter: { title: { $regex: "" } },
             showPapersRec: true,
         }; // enable Vue to track Library
     },
@@ -86,13 +87,17 @@ export default {
     },
 
     computed: {
-        allPapers(this: Vue): PepperItem[] {
+        allPapers(this: Vue): PepperItem[] { // unused code
             return this.$pepper.getPapers(true);
         },
 
         filteredPapers(): PepperItem[] {
-            const filter = this.filter;
-            return this.Library.getCursorPapers(this.showPapersRec).filter((x: any) => checkFilter(x, filter));
+            // const filter = this.filter;
+            const papers = this.Library.getCursorPapers(this.showPapersRec);
+            if (this.filter.title.$regex === "") { return papers; }
+
+            const regex = new RegExp(this.filter.title.$regex, "i");
+            return papers.filter((x: PepperItem) => x.title.match(regex));
         },
     },
 
@@ -108,6 +113,12 @@ export default {
                     $this.submit(url);
                 },
             });
+
+            // const $search = $("#search");
+            // remote.globalShortcut.register("CmdOrCtrl+F", () => {
+            //     log("xx");
+            //     $search.blur();
+            // });
         });
     },
 };
@@ -115,7 +126,7 @@ export default {
 </script>
 
 <style>
-[contenteditable="true"]:focus {
+[contenteditable="true"]:faocus {
     outline-width: 0px;
 }
 

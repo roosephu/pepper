@@ -17,14 +17,19 @@ export default class PepperCiter {
     }
 
     public getCiteKey(paper: PepperItem): string {
+        const { creators } = paper;
         let prefix = "";
-        if (paper.creators.length === 1) {
-            const lastName = paper.creators[0].$.lastName;
+        if (creators.length === 1) {
+            const lastName = creators[0].$.lastName;
             prefix += lastName;
+        } else if (creators.length > 3) {
+            const initials = creators.slice(0, 3).map((x) => x.$.lastName.charAt(0)).join("");
+            prefix += `${initials}${creators.length}+`;
         } else {
-            const lastNameInitials = paper.creators.map((x) => x.$.lastName.charAt(0)).join("");
+            const lastNameInitials = creators.map((x) => x.$.lastName.charAt(0)).join("");
             prefix += lastNameInitials;
         }
+        prefix += ":";
         if (paper.date) {
             const year = paper.date.split("-")[0].slice(2);
             prefix += year;
