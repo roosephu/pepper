@@ -1,11 +1,5 @@
 <template lang="pug">
     .item
-        //- .right.floated
-        //-     //- i.icon.caret.left
-        //-     i.plus.icon(@click="addSubfolder")
-        //-     i.trash.icon(@click="remove")
-        //- .ui.label
-        //- .ui.header(@dragstart="drag" draggable="true" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave" :class="{border: candidate}")
         i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='toggleFolding')
         .floated.content(@dblclick='gotoCursor')
             .ui.text.bold(v-editable="folder.name" :class="{blue: folder == $pepper.cursor.$, border: isCandidate}" @contextmenu="popup"
@@ -56,8 +50,9 @@ export default Vue.extend({
         },
 
         remove() {
+            const folder: PepperFolder = this.folder;
             if (this.folder.parent) {
-                this.folder.parent.removeFolder(this.folder);
+                this.folder.parent.$.removeFolder(this.folder);
             }
         },
 

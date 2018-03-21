@@ -45,7 +45,7 @@ export default Vue.extend({
         },
 
         remove() {
-            this.paper.parent.removeItem(this.paper);
+            this.paper.parent.$.removeItem(this.paper);
             this.paper.remove();
         },
     },

@@ -126,7 +126,7 @@ export default {
 </script>
 
 <style>
-[contenteditable="true"]:faocus {
+[contenteditable="true"]:focus {
     outline-width: 0px;
 }
 

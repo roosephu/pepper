@@ -30,7 +30,7 @@ export default class PepperLibrary {
         return join(this.path, suf);
     }
 
-    public async add(paper: PepperItem) {
+    public async add(paper: PepperItem, cursor?: PepperFolder) {
         if (!paper) {
             return;
         }
@@ -38,7 +38,8 @@ export default class PepperLibrary {
         if (!paper.citeKey) {
             paper.citeKey = this.citer.$.getCiteKey(paper);
         }
-        this.cursor.$.addItem(paper);
+        cursor = cursor || this.cursor.$;
+        cursor.addItem(paper);
         await paper.writeDisk(this.path);
         // await this.writeDisk();
     }
@@ -57,10 +58,16 @@ export default class PepperLibrary {
     }
 
     get structure(): any {
+        const $this = this;
         function dfs(x: Ref<PepperFolder>): any {
+            const isCursor = x.$ === $this.cursor.$;
+            const subdirs = x.$.subdirs.map(dfs);
+            const hasCursor = isCursor || subdirs.map((t) => t.hasCursor).some((t) => t);
             return {
                 name: x.$.name,
-                subdirs: x.$.subdirs.map(dfs),
+                _id: x._id,
+                subdirs,
+                hasCursor,
             };
         }
         return dfs(this.root);
