@@ -50,6 +50,8 @@ function readDisk(): PepperLibrary {
 
 const Library = readDisk();
 
+Library.cleanAttachments();
+
 import "./server";
 
 function writeDisk(): void {
@@ -64,7 +66,7 @@ function writeDisk(): void {
     log(`Write bibTeX to ${path}`);
 }
 
-setInterval(() => writeDisk, 60000);
+setInterval(writeDisk, 60000);
 
 export default Library;
 

@@ -1,6 +1,8 @@
 import { Model, Ref } from "@/pepper/db";
+import PepperAttachment from "@/pepper/PepperAttachment";
 import debug from "debug";
 import { remote } from "electron";
+import { readdir, readdirSync, remove, stat, statSync } from "fs-extra";
 import { join } from "path";
 import PepperCiter, { modelCiter } from "./PepperCiter";
 import PepperFolder, { modelFolder } from "./PepperFolder";
@@ -50,7 +52,7 @@ export default class PepperLibrary {
         return this.cursor.$.getPapers(recursive);
     }
 
-    get dbPath() {
+    get dbPath(): string {
         return this.composePath("db.json");
     }
 
@@ -64,9 +66,18 @@ export default class PepperLibrary {
         return dfs(this.root);
     }
 
-    // public findItemById(_id: string): PepperItem {
-    //     if
-    // }
+    public async cleanAttachments(): Promise<void> {
+        const papers: PepperItem[] = this.getPapers(true);
+        const usedAttachments: PepperAttachment[] = [].concat(...papers.map((x) => x.attachments));
+        const usedIDs = new Set(usedAttachments.map((x) => x._id));
+
+        const savedIDs: string[] = readdirSync(this.path).filter(
+            (x) => statSync(this.composePath(x)).isDirectory(),
+        );
+        const unusedIDs = savedIDs.filter((x) => !usedIDs.has(x));
+        // log(unusedIDs);
+        Promise.all(unusedIDs.map((x) => remove(this.composePath(x))));
+    }
 }
 
 export const modelLibrary = new Model<PepperLibrary>("library", PepperLibrary);
