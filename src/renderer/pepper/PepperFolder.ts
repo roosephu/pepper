@@ -17,13 +17,20 @@ export default class PepperFolder {
         this._id = shortid.generate();
     }
 
-    public getPapers(recursive: boolean, result?: PepperItem[]): PepperItem[] {
-        result = result || [];
-        result.push(...this.papers.map((x) => x.$));
-        if (recursive) {
-            for (const subdir of this.subdirs) {
-                subdir.$.getPapers(recursive, result);
-            }
+    public getPapers(recursive: boolean = true): PepperItem[] {
+        let papers: Array<Ref<PepperItem>>;
+        if (!recursive) {
+            papers = this.papers;
+        } else {
+            papers = [].concat(...this.flatten().map((x: PepperFolder) => x.papers));
+        }
+        return papers.map((x) => x.$);
+    }
+
+    public flatten(result: PepperFolder[] = []): PepperFolder[] {
+        result.push(this);
+        for (const subdir of this.subdirs) {
+            subdir.$.flatten(result);
         }
         return result;
     }
@@ -47,21 +54,11 @@ export default class PepperFolder {
 
     public removeItem(paper: PepperItem) {
         this.papers = this.papers.filter((x) => x._id !== paper._id);
-        // const index = this.papers.indexOf(paper);
-        // if (index !== -1) {
-        //     this.papers.splice(index, 1);
-        // }
     }
 
     public removeFolder(subdir: PepperFolder) {
-        // console.log(this, subdir);
-        this.papers.push(...subdir.getPapers(true).map((x) => x.$ref));
+        this.papers.push(...subdir.getPapers().map((x) => x.$ref));
         this.subdirs = this.subdirs.filter((x) => x._id !== subdir._id);
-        // const index = this.subdirs.indexOf(subdir);
-        // if (index !== -1) {
-        //     // delete this.subdirs[index];
-        //     this.subdirs.splice(index, 1);
-        // }
     }
 }
 

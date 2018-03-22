@@ -1,9 +1,16 @@
 <template lang="pug">
     .item
-        i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='toggleFolding')
-        .floated.content(@dblclick='gotoCursor')
-            .ui.text.bold(v-editable="folder.name" :class="{blue: folder == $pepper.cursor.$, border: isCandidate}" @contextmenu="popup"
-                          @dragstart="drag" draggable="true" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave" @dragover.prevent="") {{folder.name}}
+        i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='folded = !folded')
+        .floated.content(@dblclick='$pepper.cursor = folder.$ref')
+            .ui.text.bold(v-editable="folder.name"
+                         :class="{blue: folder == $pepper.cursor.$, border: isCandidate}"
+                         @contextmenu="popup"
+                         draggable="true"
+                         @dragstart="drag"
+                         @drop="drop"
+                         @dragenter="isCandiate = true"
+                         @dragleave="isCandidate = false"
+                         @dragover.prevent="")
 
         .list(v-if='!folded && hasSubfolders')
             PTree(v-for="subdir in folder.subdirs", :folder="subdir.$", :key="subdir._id")
@@ -39,25 +46,15 @@ export default Vue.extend({
     },
 
     methods: {
-        toggleFolding() {
-            // console.log("fold", this.folder.name);
-            this.folded = !this.folded;
-        },
-
         addSubfolder() {
             const subdir: PepperFolder = modelFolder.new("untitled").$;
             this.folder.addFolder(subdir);
         },
 
         remove() {
-            const folder: PepperFolder = this.folder;
             if (this.folder.parent) {
                 this.folder.parent.$.removeFolder(this.folder);
             }
-        },
-
-        gotoCursor() {
-            this.$pepper.cursor = this.folder.$ref;
         },
 
         popup() {
@@ -72,14 +69,6 @@ export default Vue.extend({
                 log(paper, this.folder);
                 this.folder.addItem(paper);
             }
-        },
-
-        dragEnter(event: Event) {
-            this.isCandidate = true;
-        },
-
-        dragLeave(event: Event) {
-            this.isCandidate = false;
         },
 
         drag(event: DragEvent) {

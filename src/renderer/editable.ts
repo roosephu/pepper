@@ -16,18 +16,18 @@ function install(Vue: VueConstructor<_Vue>) {
                 obj[lastKey] = newValue;
             };
 
-            const $this = this;
+            el.dataset.originalValue = value;
             el.onblur = (event: Event) => {
 
-                if (el.innerText !== value) {
+                if (el.innerText !== el.dataset.originalValue) {
                     if (el.dataset.isModified === "true") {
                         // should set value here
                         setValue(vnode.context, keyPath, el.innerText);
-                    } else if (el.innerText !== value) {
-                        el.innerText = value;
+                    } else {
+                        el.innerText = el.dataset.originalValue;
                     }
                 }
-                value = el.innerText;
+                el.dataset.originalValue = el.innerText;
                 el.dataset.isModified = "false";
             };
 
@@ -46,7 +46,7 @@ function install(Vue: VueConstructor<_Vue>) {
             };
             el.innerText = value;
         },
-        update() {
+        update(el: HTMLElement, { value }: VNodeDirective) {
             //
         },
         componentUpdated(el: HTMLElement, { expression, value }: VNodeDirective, vnode: VNode) {
@@ -54,6 +54,7 @@ function install(Vue: VueConstructor<_Vue>) {
 
             if (el.innerText !== value) {
                 el.innerText = value;
+                el.dataset.originalValue = value;
             }
         },
     });

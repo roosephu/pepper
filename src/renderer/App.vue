@@ -9,7 +9,7 @@
                     a.item About
 
         .ui.stripe.vertical.segment
-            .ui.grid.aligned.middle.container
+            .ui.grid.aligned.container
                 .row
                     .sixteen.wide.column
                         .ui.form#urlForm
@@ -40,6 +40,7 @@
                                         .ui.checkbox.fitted
                                     th.twelve.wide Title
                                     th.four.wide Author
+                                    th.collapsing tags
                                     th.collapsing Cite Key
                             tbody
                                 PItem(v-for="paper in filteredPapers", :paper="paper", :key="paper._id")
@@ -113,12 +114,6 @@ export default {
                     $this.submit(url);
                 },
             });
-
-            // const $search = $("#search");
-            // remote.globalShortcut.register("CmdOrCtrl+F", () => {
-            //     log("xx");
-            //     $search.blur();
-            // });
         });
     },
 };

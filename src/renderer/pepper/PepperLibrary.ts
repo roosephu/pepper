@@ -31,22 +31,17 @@ export default class PepperLibrary {
     }
 
     public async add(paper: PepperItem, cursor?: PepperFolder) {
-        if (!paper) {
-            return;
-        }
-        // console.log(paper);
+        if (!paper) { return; }
         if (!paper.citeKey) {
             paper.citeKey = this.citer.$.getCiteKey(paper);
         }
         cursor = cursor || this.cursor.$;
         cursor.addItem(paper);
         await paper.writeDisk(this.path);
-        // await this.writeDisk();
     }
 
     public getPapers(recursive: boolean): PepperItem[] {
         return this.root.$.getPapers(recursive);
-        // return this.papers;
     }
 
     public getCursorPapers(recursive: boolean): PepperItem[] {

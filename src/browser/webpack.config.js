@@ -93,7 +93,7 @@ const config = {
     ]
   },
   output: {
-    path: join(__dirname, './dist'),
+    path: join(__dirname, '../../dist/chrome'),
     filename: 'app.js'
   },
   plugins: [

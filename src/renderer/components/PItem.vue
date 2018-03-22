@@ -8,6 +8,8 @@
         td(@dblclick="open(paper)" draggable="true" @dragstart="drag")
             a(v-editable="paper.title")
         td {{paper.$formattedCreators}}
+        td
+            p(v-editable="tags")
         td {{paper.citeKey}}
 </template>
 
@@ -21,8 +23,16 @@ import Vue from "vue";
 const log = debug("pepper:PItem");
 
 export default Vue.extend({
+    name: "PItem",
+
     props: {
         paper: PepperItem,
+    },
+
+    data() {
+        return {
+            tags: "",
+        };
     },
 
     methods: {
@@ -50,12 +60,22 @@ export default Vue.extend({
         },
     },
 
+    watch: {
+        tags(newValue: string) {
+            this.paper.tags = newValue.split(" ");
+        },
+    },
+
     mounted() {
         const template = [
             { label: "Remove", click: this.remove },
         ];
         this.$menu = remote.Menu.buildFromTemplate(template);
         $(".checkbox").checkbox();
+
+        this.$nextTick(() => {
+            this.tags = this.paper.tags.join(" ");
+        });
     },
 });
 
