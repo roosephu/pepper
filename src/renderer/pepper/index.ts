@@ -54,8 +54,7 @@ Library.cleanAttachments();
 
 import "./server";
 
-function writeDisk(): void {
-    if (!Library.dirty) { return; }
+export function writeDisk(): void {
     localStorage.Library = serialize(Library.$ref);
     // const db = JSON.stringify(this.dump(), null, 2);
     // await fs.writeFile(join(this.path, "db.json"), db);
@@ -66,8 +65,6 @@ function writeDisk(): void {
     fs.writeFileSync(path, bibTeX);
     log(`Write bibTeX to ${path}`);
 }
-
-setInterval(writeDisk, 60000);
 
 export default Library;
 

@@ -49,8 +49,7 @@
 <script lang="ts">
 import PItem from "@/components/PItem.vue";
 import PTree from "@/components/PTree.vue";
-import Library from "@/pepper";
-import { checkFilter } from "@/pepper/db";
+import Library, { writeDisk } from "@/pepper";
 import PepperFolder from "@/pepper/PepperFolder";
 import PepperItem from "@/pepper/PepperItem";
 import PepperLibrary from "@/pepper/PepperLibrary";
@@ -59,8 +58,9 @@ import PepperLibrary from "@/pepper/PepperLibrary";
 import { translate } from "@/pepper/translators";
 import debug from "debug";
 import { remote } from "electron";
+import { setInterval, setTimeout } from "timers";
 import Vue from "vue";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 // PDFJS.GlobalWorkerOptions.workerSrc = 'pdf.worker.js'
 
@@ -87,7 +87,7 @@ export default {
             this.addItem(item);
         },
 
-        ...mapActions("pepper", ["addItem"]),
+        ...mapMutations("pepper", ["addItem", "unsetDirty"]),
     },
 
     computed: {
@@ -107,7 +107,7 @@ export default {
         ...mapState(["pepper"]),
     },
 
-    mounted(this: Vue) {
+    mounted() {
         this.$nextTick(() => {
             const $this: any = this;
             $(".checkbox").checkbox();
@@ -120,6 +120,13 @@ export default {
                 },
             });
         });
+
+        setInterval(() => {
+            if (this.pepper.dirty) {
+                this.unsetDirty();
+                writeDisk();
+            }
+        }, 1000);
     },
 };
 

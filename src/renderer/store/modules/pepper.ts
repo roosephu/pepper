@@ -55,6 +55,10 @@ const mutations = {
         item.remove();
         state.dirty = true;
     },
+
+    unsetDirty(state: PepperLibrary) {
+        state.dirty = false;
+    },
 };
 
 export default {
