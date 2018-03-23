@@ -1,14 +1,14 @@
 <template lang="pug">
     .item
         i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='folded = !folded')
-        .floated.content(@dblclick='$pepper.cursor = folder.$ref')
+        .floated.content(@dblclick='setCursor(folder)')
             .ui.text.bold(v-editable="folder.name"
-                         :class="{blue: folder == $pepper.cursor.$, border: isCandidate}"
+                         :class="{blue: folder == pepper.cursor.$, border: isCandidate}"
                          @contextmenu="popup"
                          draggable="true"
-                         @dragstart="drag"
+                         @dragstart="drag(folder, 'folder')"
                          @drop="drop"
-                         @dragenter="isCandiate = true"
+                         @dragenter="isCandidate = true"
                          @dragleave="isCandidate = false"
                          @dragover.prevent="")
 
@@ -22,6 +22,7 @@ import PepperItem from "@/pepper/PepperItem";
 import debug from "debug";
 import { MenuItemConstructorOptions, remote } from "electron";
 import Vue from "vue";
+import { mapMutations, mapState } from "vuex";
 
 const log = debug("pepper:PTree");
 
@@ -43,44 +44,39 @@ export default Vue.extend({
         hasSubfolders(): boolean {
             return this.folder.subdirs.length !== 0;
         },
+
+        ...mapState("drag", {
+            dragSrc: "src",
+            dragType: "srcType",
+        }),
+
+        ...mapState(["pepper"]),
     },
 
     methods: {
         addSubfolder() {
             const subdir: PepperFolder = modelFolder.new("untitled").$;
-            this.folder.addFolder(subdir);
-        },
-
-        remove() {
-            if (this.folder.parent) {
-                this.folder.parent.$.removeFolder(this.folder);
-            }
+            this.addSubdir({ parent: this.folder, subdir });
         },
 
         popup() {
             this.$menu.popup(remote.getCurrentWindow());
         },
 
-        drop(event: DragEvent) {
-            const item = event.dataTransfer.getData("item");
+        drop() {
             this.isCandidate = false;
-            if (item) {
-                const paper: PepperItem = this.$drag.src;
-                log(paper, this.folder);
-                this.folder.addItem(paper);
+            if (this.dragType === "item") {
+                this.moveItem({ item: this.dragSrc, folder: this.folder });
             }
         },
 
-        drag(event: DragEvent) {
-            event.dataTransfer.setData("folder", this.folder._id);
-        },
-
+        ...mapMutations("pepper", ["setCursor", "addSubdir", "removeFolder", "moveItem"]),
     },
 
     mounted() {
         const template = [
             { label: "New Subfolder", click: this.addSubfolder },
-            { label: "Remove this folder", click: this.remove },
+            { label: "Remove this folder", click: () => this.removeFolder(this.folder) },
             // { type: "separator" as "separator" },
         ];
         this.$menu = remote.Menu.buildFromTemplate(template);

@@ -9,9 +9,8 @@ interface PepperDrag {
 // src/vue-shims.d.ts
 declare module "vue/types/vue" {
     interface Vue {
-      $pepper: PepperLibrary;
-      $drag: PepperDrag;
-      $db: {[key: string]: Database};
+    //   $pepper: PepperLibrary;
+      $db: {[key: string]: Database<any>};
     }
 }
 

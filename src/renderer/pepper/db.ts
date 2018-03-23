@@ -148,7 +148,7 @@ export function deserialize(str: string, models: {[key: string]: any}): any {
             } else {
                 const model = models[_ref];
                 // put a placeholder here to prevent recurrence.
-                const doc = new model.func();
+                const doc = Object.create(model.func.prototype); // new model.func();
                 doc._id = _id;
                 model.addRef(doc);
                 Object.assign(doc, construct(db[_ref].kv[_id]));

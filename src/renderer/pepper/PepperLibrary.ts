@@ -16,6 +16,7 @@ export default class PepperLibrary {
     public citer: Ref<PepperCiter>;
     public path: string;
     public _id: string;
+    public dirty: boolean;
     public $ref: Ref<PepperLibrary>;
 
     constructor(path: string) {
@@ -23,6 +24,7 @@ export default class PepperLibrary {
         this.path = path;
         this.root = modelFolder.new("Library");
         this.cursor = this.root;
+        this.dirty = false;
         this.citer = modelCiter.new();
     }
 

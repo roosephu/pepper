@@ -55,6 +55,7 @@ Library.cleanAttachments();
 import "./server";
 
 function writeDisk(): void {
+    if (!Library.dirty) { return; }
     localStorage.Library = serialize(Library.$ref);
     // const db = JSON.stringify(this.dump(), null, 2);
     // await fs.writeFile(join(this.path, "db.json"), db);
@@ -71,12 +72,8 @@ setInterval(writeDisk, 60000);
 export default Library;
 
 function install(Vue: VueConstructor<_Vue>) {
-    Vue.prototype.$pepper = Library;
+    // Vue.prototype.$pepper = Library;
     Vue.prototype.$db = database;
-    Vue.prototype.$drag = {
-        dst: null,
-        src: null,
-    };
 }
 
 export { install };

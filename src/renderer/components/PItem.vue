@@ -5,7 +5,7 @@
             .ui.checkbox.fitted
                 input(type="checkbox" v-model="paper.done")
             //- i.icon.calendar.check(:class="{'online': !thi}")
-        td(@dblclick="open(paper)" draggable="true" @dragstart="drag")
+        td(@dblclick="open(paper)" draggable="true" @dragstart="drag({ src: paper, srcType: 'item' })")
             a(v-editable="paper.title")
         td {{paper.$formattedCreators}}
         td
@@ -19,6 +19,7 @@ import PepperItem from "@/pepper/PepperItem";
 import debug from "debug";
 import { remote, shell } from "electron";
 import Vue from "vue";
+import { mapMutations, mapState } from "vuex";
 
 const log = debug("pepper:PItem");
 
@@ -35,29 +36,25 @@ export default Vue.extend({
         };
     },
 
+    computed: {
+        ...mapState(["pepper"]),
+    },
+
     methods: {
         open(paper: PepperItem) {
             // log("dblclick");
             const attachment = paper.$mainFile;
             if (attachment) {
-                shell.openItem(this.$pepper.composePath(attachment));
+                shell.openItem(this.pepper.composePath(attachment));
             }
-        },
-
-        drag(event: DragEvent) {
-            // log(event, this);
-            event.dataTransfer.setData("item", this.paper._id);
-            this.$drag.src = this.paper;
         },
 
         popup() {
             this.$menu.popup(remote.getCurrentWindow());
         },
 
-        remove() {
-            this.paper.parent.$.removeItem(this.paper);
-            this.paper.remove();
-        },
+        ...mapMutations("drag", ["drag"]),
+        ...mapMutations("pepper", ["removeItem"]),
     },
 
     watch: {
@@ -68,12 +65,12 @@ export default Vue.extend({
 
     mounted() {
         const template = [
-            { label: "Remove", click: this.remove },
+            { label: "Remove", click: () => this.removeItem(this.paper) },
         ];
         this.$menu = remote.Menu.buildFromTemplate(template);
-        $(".checkbox").checkbox();
 
         this.$nextTick(() => {
+            $(this.$el).find(".checkbox").checkbox();
             this.tags = this.paper.tags.join(" ");
         });
     },

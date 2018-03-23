@@ -28,7 +28,7 @@
                 .row
                     .four.wide.column
                         .ui.list
-                            PTree(:folder="Library.root.$")
+                            PTree(:folder="pepper.root.$")
                     .twelve.wide.column
                         .ui.checkbox
                             input(type='checkbox', v-model="showPapersRec")
@@ -53,12 +53,14 @@ import Library from "@/pepper";
 import { checkFilter } from "@/pepper/db";
 import PepperFolder from "@/pepper/PepperFolder";
 import PepperItem from "@/pepper/PepperItem";
+import PepperLibrary from "@/pepper/PepperLibrary";
 // import PDFJS from 'pdfjs-dist'
 // import axios from 'axios'
 import { translate } from "@/pepper/translators";
 import debug from "debug";
 import { remote } from "electron";
 import Vue from "vue";
+import { mapActions, mapState } from "vuex";
 
 // PDFJS.GlobalWorkerOptions.workerSrc = 'pdf.worker.js'
 
@@ -74,32 +76,35 @@ export default {
 
     data() {
         return {
-            Library,
             filter: { title: { $regex: "" } },
             showPapersRec: true,
         }; // enable Vue to track Library
     },
 
     methods: {
-        async submit(this: Vue, url: string) {
-            await this.$pepper.add(await translate(url));
+        async submit(this: any, url: string) {
+            const item = await translate(url);
+            this.addItem(item);
         },
 
+        ...mapActions("pepper", ["addItem"]),
     },
 
     computed: {
-        allPapers(this: Vue): PepperItem[] { // unused code
-            return this.$pepper.getPapers(true);
+        allPapers(this: any): PepperItem[] { // unused code
+            return (this.pepper as PepperLibrary).getPapers(true);
         },
 
         filteredPapers(): PepperItem[] {
             // const filter = this.filter;
-            const papers = this.Library.getCursorPapers(this.showPapersRec);
+            const papers = this.pepper.getCursorPapers(this.showPapersRec);
             if (this.filter.title.$regex === "") { return papers; }
 
             const regex = new RegExp(this.filter.title.$regex, "i");
             return papers.filter((x: PepperItem) => x.title.match(regex));
         },
+
+        ...mapState(["pepper"]),
     },
 
     mounted(this: Vue) {

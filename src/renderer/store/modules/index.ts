@@ -13,4 +13,10 @@
 
 // export default modules;
 
-export default {};
+import drag from "./drag";
+import pepper from "./pepper";
+
+export default {
+    drag,
+    pepper,
+};
