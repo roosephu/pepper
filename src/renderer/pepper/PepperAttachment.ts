@@ -23,7 +23,6 @@ export default class PepperAttachment {
     public title: string;
     public url: string;
     public _id: string;
-    public $ref: Ref<PepperAttachment>;
     public entry: string;
 
     constructor(mimeType: string, title: string, url: string, paper?: PepperItem) {
@@ -54,4 +53,3 @@ export default class PepperAttachment {
 }
 
 export const modelAttachment = new Model<PepperAttachment>("attachment", PepperAttachment);
-

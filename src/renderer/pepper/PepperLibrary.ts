@@ -1,31 +1,37 @@
-import { Model, Ref } from "@/pepper/db";
+import { Database, Model, Ref } from "@/pepper/db";
 import PepperAttachment from "@/pepper/PepperAttachment";
+import PepperCiter from "@/pepper/PepperCiter";
+import PepperCreator from "@/pepper/PepperCreator";
+import PepperFolder from "@/pepper/PepperFolder";
+import PepperItem from "@/pepper/PepperItem";
 import debug from "debug";
 import { remote } from "electron";
 import { readdir, readdirSync, remove, stat, statSync } from "fs-extra";
 import { join } from "path";
-import PepperCiter, { modelCiter } from "./PepperCiter";
-import PepperFolder, { modelFolder } from "./PepperFolder";
-import PepperItem from "./PepperItem";
+import shortid from "shortid";
+
 
 const log = debug("pepper:Library");
 
 export default class PepperLibrary {
-    public root: Ref<PepperFolder>;
-    public cursor: Ref<PepperFolder>;
-    public citer: Ref<PepperCiter>;
+    public root: PepperFolder;
+    public cursor: PepperFolder;
+    public citer: PepperCiter;
     public path: string;
     public _id: string;
     public dirty: boolean;
-    public $ref: Ref<PepperLibrary>;
+    public $db: {[key: string]: {[key: string]: any}};
 
     constructor(path: string) {
         // console.log("main path", this.path);
         this.path = path;
-        this.root = modelFolder.new("Library");
+        this.root = new PepperFolder("Library");
         this.cursor = this.root;
         this.dirty = false;
-        this.citer = modelCiter.new();
+        this.citer = new PepperCiter();
+        this._id = shortid.generate();
+
+        this.$db = {};
     }
 
     public composePath(suf: string): string {
@@ -35,19 +41,19 @@ export default class PepperLibrary {
     public async add(paper: PepperItem, cursor?: PepperFolder) {
         if (!paper) { return; }
         if (!paper.citeKey) {
-            paper.citeKey = this.citer.$.getCiteKey(paper);
+            paper.citeKey = this.citer.getCiteKey(paper);
         }
-        cursor = cursor || this.cursor.$;
+        cursor = cursor || this.cursor;
         cursor.addItem(paper);
         await paper.writeDisk(this.path);
     }
 
     public getPapers(recursive: boolean): PepperItem[] {
-        return this.root.$.getPapers(recursive);
+        return this.root.getPapers(recursive);
     }
 
     public getCursorPapers(recursive: boolean): PepperItem[] {
-        return this.cursor.$.getPapers(recursive);
+        return this.cursor.getPapers(recursive);
     }
 
     get dbPath(): string {
@@ -56,12 +62,12 @@ export default class PepperLibrary {
 
     get structure(): any {
         const $this = this;
-        function dfs(x: Ref<PepperFolder>): any {
-            const isCursor = x.$ === $this.cursor.$;
-            const subdirs = x.$.subdirs.map(dfs);
+        function dfs(x: PepperFolder): any {
+            const isCursor = x === $this.cursor;
+            const subdirs = x.subdirs.map(dfs);
             const hasCursor = isCursor || subdirs.map((t) => t.hasCursor).some((t) => t);
             return {
-                name: x.$.name,
+                name: x.name,
                 _id: x._id,
                 subdirs,
                 hasCursor,

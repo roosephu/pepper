@@ -1,34 +1,22 @@
-import { modelAttachment } from "@/pepper/PepperAttachment";
-import { modelCiter } from "@/pepper/PepperCiter";
-import { modelCreator } from "@/pepper/PepperCreator";
-import { modelFolder } from "@/pepper/PepperFolder";
-import { modelItem } from "@/pepper/PepperItem";
-import PepperLibrary, { modelLibrary } from "@/pepper/PepperLibrary";
+import PepperLibrary from "@/pepper/PepperLibrary";
+import { deserialize, dumpDatabase, serialize } from "@/pepper/serialize";
 import debug from "debug";
 import { remote } from "electron";
 import * as fs from "fs-extra";
 import { join } from "path";
 import _Vue, { VueConstructor } from "vue";
-import database, { deserialize, Model, serialize } from "./db";
+
 
 const log = debug("pepper:core");
 
-function arrayToObj(pairs: Array<[string, any]>): any {
+function arrayToObj(pairs: Array<[string, any]>): {[key: string]: any} {
+    // return pairs.reduce((y: any, [key, val]: [string, any]) => (y[key] = val, y), {});
     const ret: {[key: string]: any} = {};
     for (const [key, value] of pairs) {
         ret[key] = value;
     }
     return ret;
 }
-
-const models: {[key: string]: any} = arrayToObj(([
-    modelAttachment,
-    modelCiter,
-    modelCreator,
-    modelFolder,
-    modelItem,
-    modelLibrary,
-]).map((x) => [x.name, x] as [string, any]));
 
 const libraryPath = join(remote.app.getPath("appData"), "Pepper", "Library");
 
@@ -40,43 +28,24 @@ function readDisk(): PepperLibrary {
     const { Library } = localStorage;
     if (Library) {
         log("Read from disk.");
-        return deserialize(Library, models);
+        const { obj: lib, db } = deserialize(Library);
+        lib.$db = db;
+        return lib;
     } else {
         log("New library");
         // return new PepperLibrary(libraryPath);
-        return modelLibrary.new(libraryPath).$;
+        const lib = new PepperLibrary(libraryPath);
+        lib.$db = dumpDatabase(lib);
+        return lib;
     }
 }
 
 const Library = readDisk();
-
 Library.cleanAttachments();
-
-import "./server";
-
-export function writeDisk(): void {
-    localStorage.Library = serialize(Library.$ref);
-    // const db = JSON.stringify(this.dump(), null, 2);
-    // await fs.writeFile(join(this.path, "db.json"), db);
-    log("Write database to disk.");
-
-    const bibTeX = Library.getPapers(true).map((x) => x.bibTeX).join("\n\n");
-    const path = Library.composePath("cite.bib");
-    fs.writeFileSync(path, bibTeX);
-    log(`Write bibTeX to ${path}`);
-}
 
 export default Library;
 
-function install(Vue: VueConstructor<_Vue>) {
-    // Vue.prototype.$pepper = Library;
-    Vue.prototype.$db = database;
-}
-
-export { install };
-
-
-function initMenu(globalSave: () => void): void {
+export function initMenu(globalSave: () => void): void {
     const template: any = [
         {
             label: "Edit",
@@ -173,6 +142,3 @@ function initMenu(globalSave: () => void): void {
 
     remote.Menu.setApplicationMenu(menu);
 }
-
-// const main = require("../renderer/main");
-initMenu(writeDisk);

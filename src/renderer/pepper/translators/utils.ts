@@ -1,4 +1,4 @@
-import { Ref } from "@/pepper/db";
+// import { Ref } from "@/pepper/db";
 import PepperCreator, { modelCreator } from "@/pepper/PepperCreator";
 
 function xpathText(doc: Document | Node, expr: string, ns?: any, delimiter?: string) {
@@ -33,7 +33,7 @@ function xpathMatch(doc: Document | Node, expr: string, ns?: any): Node[] {
     return ret;
 }
 
-function cleanAuthor(author: string, type: string, useComma?: boolean): Ref<PepperCreator> {
+function cleanAuthor(author: string, type: string, useComma?: boolean): PepperCreator {
   const allCaps = "A-Z" + "\u0400-\u042f";		// cyrilic
 
   const allCapsRe = new RegExp("^[" + allCaps + "]+$");
@@ -95,7 +95,7 @@ function cleanAuthor(author: string, type: string, useComma?: boolean): Ref<Pepp
     firstName = newFirstName.replace(/ -/g, "-").trim();
   }
 
-  return modelCreator.new(firstName, lastName, type);
+  return new PepperCreator(firstName, lastName, type);
 }
 
 export {

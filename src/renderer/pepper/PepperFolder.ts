@@ -1,55 +1,54 @@
-import { Model, Ref } from "@/pepper/db";
+import { Model } from "@/pepper/db";
 import shortid from "shortid";
 import PepperItem from "./PepperItem";
 
 export default class PepperFolder {
-    public subdirs: Array<Ref<PepperFolder>>; // {[key: string]: PepperFolder};
-    public papers: Array<Ref<PepperItem>>;
+    public subdirs: PepperFolder[]; // {[key: string]: PepperFolder};
+    public papers: PepperItem[];
     public name: string;
-    public parent: Ref<PepperFolder>;
+    public parent: PepperFolder;
     public _id: string;
-    public $ref: Ref<PepperFolder>;
 
     constructor(name: string, papers?: PepperItem[]) {
-        this.papers = papers ? papers.map((x) => x.$ref) : [];
+        this.papers = papers ? papers : [];
         this.subdirs = [];
         this.name = name;
         this._id = shortid.generate();
     }
 
     public getPapers(recursive: boolean = true): PepperItem[] {
-        let papers: Array<Ref<PepperItem>>;
+        let papers: PepperItem[];
         if (!recursive) {
             papers = this.papers;
         } else {
             papers = [].concat(...this.flatten().map((x: PepperFolder) => x.papers));
         }
-        return papers.map((x) => x.$);
+        return papers.map((x) => x);
     }
 
     public flatten(result: PepperFolder[] = []): PepperFolder[] {
         result.push(this);
         for (const subdir of this.subdirs) {
-            subdir.$.flatten(result);
+            subdir.flatten(result);
         }
         return result;
     }
 
     public addItem(paper: PepperItem) {
         if (paper.parent) {
-            if (paper.parent.$ !== this) {
-                paper.parent.$.removeItem(paper);
+            if (paper.parent !== this) {
+                paper.parent.removeItem(paper);
             } else {
                 return;
             }
         }
-        this.papers.push(paper.$ref);
-        paper.parent = this.$ref;
+        this.papers.push(paper);
+        paper.parent = this;
     }
 
     public addFolder(subdir: PepperFolder) {
-        this.subdirs.push(subdir.$ref);
-        subdir.parent = this.$ref;
+        this.subdirs.push(subdir);
+        subdir.parent = this;
     }
 
     public removeItem(paper: PepperItem) {
@@ -57,7 +56,7 @@ export default class PepperFolder {
     }
 
     public removeFolder(subdir: PepperFolder) {
-        this.papers.push(...subdir.getPapers().map((x) => x.$ref));
+        this.papers.push(...subdir.getPapers().map((x) => x));
         this.subdirs = this.subdirs.filter((x) => x._id !== subdir._id);
     }
 }

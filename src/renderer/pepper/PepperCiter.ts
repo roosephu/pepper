@@ -10,23 +10,23 @@ const log = debug("pepper:citer");
 export default class PepperCiter {
     public citeKeys: {[key: string]: boolean};
     public _id: string;
-    public $ref: Ref<PepperCiter>;
 
     constructor() {
         this.citeKeys = {};
+        this._id = shortid.generate();
     }
 
     public getCiteKey(paper: PepperItem): string {
         const { creators } = paper;
         let prefix = "";
         if (creators.length === 1) {
-            const lastName = creators[0].$.lastName;
+            const lastName = creators[0].lastName;
             prefix += lastName;
         } else if (creators.length > 3) {
-            const initials = creators.slice(0, 3).map((x) => x.$.lastName.charAt(0)).join("");
+            const initials = creators.slice(0, 3).map((x) => x.lastName.charAt(0)).join("");
             prefix += `${initials}${creators.length}+`;
         } else {
-            const lastNameInitials = creators.map((x) => x.$.lastName.charAt(0)).join("");
+            const lastNameInitials = creators.map((x) => x.lastName.charAt(0)).join("");
             prefix += lastNameInitials;
         }
         prefix += ":";

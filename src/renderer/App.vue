@@ -28,7 +28,7 @@
                 .row
                     .four.wide.column
                         .ui.list
-                            PTree(:folder="pepper.root.$")
+                            PTree(:folder="pepper.root")
                     .twelve.wide.column
                         .ui.checkbox
                             input(type='checkbox', v-model="showPapersRec")
@@ -49,12 +49,10 @@
 <script lang="ts">
 import PItem from "@/components/PItem.vue";
 import PTree from "@/components/PTree.vue";
-import Library, { writeDisk } from "@/pepper";
+import Library, { initMenu } from "@/pepper";
 import PepperFolder from "@/pepper/PepperFolder";
 import PepperItem from "@/pepper/PepperItem";
 import PepperLibrary from "@/pepper/PepperLibrary";
-// import PDFJS from 'pdfjs-dist'
-// import axios from 'axios'
 import { translate } from "@/pepper/translators";
 import debug from "debug";
 import { remote } from "electron";
@@ -83,11 +81,12 @@ export default {
 
     methods: {
         async submit(this: any, url: string) {
-            const item = await translate(url);
-            this.addItem(item);
+            const paper = await translate(url);
+            this.addItem({ paper });
         },
 
         ...mapMutations("pepper", ["addItem", "unsetDirty"]),
+        ...mapActions("pepper", ["writeDisk"]),
     },
 
     computed: {
@@ -119,12 +118,15 @@ export default {
                     $this.submit(url);
                 },
             });
+            initMenu(() => {
+                this.writeDisk();
+            });
         });
 
         setInterval(() => {
             if (this.pepper.dirty) {
+                this.writeDisk();
                 this.unsetDirty();
-                writeDisk();
             }
         }, 1000);
     },

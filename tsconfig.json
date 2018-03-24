@@ -9,7 +9,6 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "no-shadowed-variables": false,
     "paths": {
       "@/*": ["src/renderer/*"],
       "*": ["node_modules/*"]

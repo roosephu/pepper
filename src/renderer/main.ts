@@ -23,10 +23,8 @@ if (!process.env.IS_WEB) { Vue.use(require("vue-electron")); }
 Vue.config.productionTip = false;
 
 import Editable from "./editable";
-import { install as Pepper } from "./pepper";
 
 Vue.use(Editable);
-Vue.use(Pepper);
 
 /* eslint-disable no-new */
 new Vue({
@@ -35,3 +33,5 @@ new Vue({
   store,
   template: "<App/>",
 }).$mount("#app");
+
+import "./server";

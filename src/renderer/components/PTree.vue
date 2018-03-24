@@ -3,7 +3,7 @@
         i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='folded = !folded')
         .floated.content(@dblclick='setCursor(folder)')
             .ui.text.bold(v-editable="folder.name"
-                         :class="{blue: folder == pepper.cursor.$, border: isCandidate}"
+                         :class="{blue: folder == pepper.cursor, border: isCandidate}"
                          @contextmenu="popup"
                          draggable="true"
                          @dragstart="drag(folder, 'folder')"
@@ -13,7 +13,7 @@
                          @dragover.prevent="")
 
         .list(v-if='!folded && hasSubfolders')
-            PTree(v-for="subdir in folder.subdirs", :folder="subdir.$", :key="subdir._id")
+            PTree(v-for="subdir in folder.subdirs", :folder="subdir", :key="subdir._id")
 </template>
 
 <script lang="ts">
@@ -55,7 +55,7 @@ export default Vue.extend({
 
     methods: {
         addSubfolder() {
-            const subdir: PepperFolder = modelFolder.new("untitled").$;
+            const subdir: PepperFolder = new PepperFolder("untitled");
             this.addSubdir({ parent: this.folder, subdir });
         },
 
