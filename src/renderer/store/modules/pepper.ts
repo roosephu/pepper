@@ -83,6 +83,10 @@ const mutations = {
         state.$db = dumpDatabase(state);
     },
 
+    updateProperty(state: PepperLibrary, { obj, key, value }: { obj: any, key: string, value: any }) {
+        obj[key] = value;
+        state.dirty = true;
+    },
 };
 
 export default {

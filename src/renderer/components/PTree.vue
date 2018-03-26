@@ -2,7 +2,7 @@
     .item
         i.folder.icon.fitted(:class='{"outline": !hasSubfolders, "open": hasSubfolders && folded}' @click='folded = !folded')
         .floated.content(@dblclick='setCursor(folder)')
-            .ui.text.bold(v-editable="folder.name"
+            .ui.text.bold(v-editable.commit="folder.name"
                          :class="{blue: folder == pepper.cursor, border: isCandidate}"
                          @contextmenu="popup"
                          draggable="true"
@@ -70,7 +70,7 @@ export default Vue.extend({
             }
         },
 
-        ...mapMutations("pepper", ["setCursor", "addSubdir", "removeFolder", "moveItem"]),
+        ...mapMutations("pepper", ["setCursor", "addSubdir", "removeFolder", "moveItem", "updateProperty"]),
     },
 
     mounted() {

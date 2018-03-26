@@ -1,5 +1,8 @@
+import debug from "debug";
 import _Vue, { VueConstructor } from "vue";
 import { VNode, VNodeDirective } from "vue/types/vnode";
+
+const log = debug("pepper:editable");
 
 function install(Vue: VueConstructor<_Vue>) {
     // the expression must be accessible from top level context
@@ -13,7 +16,11 @@ function install(Vue: VueConstructor<_Vue>) {
                     obj = obj[key];
                 }
                 const lastKey = path[path.length - 1];
-                obj[lastKey] = newValue;
+                if (modifiers.commit) {
+                    (vnode.context as any).updateProperty({ obj, key: lastKey, value: newValue });
+                } else {
+                    obj[lastKey] = newValue;
+                }
             };
 
             el.dataset.originalValue = value;

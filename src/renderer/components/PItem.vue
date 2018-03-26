@@ -6,7 +6,7 @@
                 input(type="checkbox" v-model="paper.done")
             //- i.icon.calendar.check(:class="{'online': !thi}")
         td(@dblclick="open(paper)" draggable="true" @dragstart="drag({ src: paper, srcType: 'item' })")
-            a(v-editable="paper.title")
+            a(v-editable.commit="paper.title")
         td {{paper.$formattedCreators}}
         td
             p(v-editable="tags")
@@ -54,12 +54,12 @@ export default Vue.extend({
         },
 
         ...mapMutations("drag", ["drag"]),
-        ...mapMutations("pepper", ["removeItem"]),
+        ...mapMutations("pepper", ["removeItem", "updateProperty"]),
     },
 
     watch: {
         tags(newValue: string) {
-            this.paper.tags = newValue.split(" ");
+            this.updateProperty({ obj: this.paper, key: "tags", value: newValue.split(" ") });
         },
     },
 
