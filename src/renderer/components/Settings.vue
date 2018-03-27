@@ -30,44 +30,44 @@ import jsonminify from "jsonminify";
 const log = debug("pepper:settings");
 
 export default Vue.extend({
-  name: "Settings",
+    name: "Settings",
 
-  data() {
-    return {
-      disabledImport: true
-    };
-  },
-
-  methods: {
-    importLibrary(): void {
-      const files: string[] = remote.dialog.showOpenDialog({
-        filters: [{ name: "JSON Files", extensions: ["json"] }],
-        properties: ["openFile"]
-      });
-      if (files && files.length) {
-        const file = files[0];
-        log("Do what you want to do", file);
-        if (file !== undefined) {
-            fs.readFile(file, "utf-8", (err, data) => {
-                log("Loading file: " + file);
-                if (err) {
-                    log("Error loading file: " + file + ", " + err);
-                    return;
-                }
-
-                ImportFromZoteroJSON(jsonminify(data));
-            })
-        }
-      }
+    data() {
+        return {
+            disabledImport: true
+        };
     },
 
-    exportLibrary(): void {
-      //
-    }
-  },
+    methods: {
+        importLibrary(): void {
+            const files: string[] = remote.dialog.showOpenDialog({
+                filters: [{ name: "JSON Files", extensions: ["json"] }],
+                properties: ["openFile"]
+            });
+            if (files && files.length) {
+                const file = files[0];
+                log("Do what you want to do", file);
+                if (file !== undefined) {
+                    fs.readFile(file, "utf-8", (err, data) => {
+                        log("Loading file: " + file);
+                        if (err) {
+                            log("Error loading file: " + file + ", " + err);
+                            return;
+                        }
 
-  mounted() {
-    // this.$nextTick(() => );
-  }
+                        ImportFromZoteroJSON(jsonminify(data));
+                    });
+                }
+            }
+        },
+
+        exportLibrary(): void {
+            //
+        }
+    },
+
+    mounted() {
+        // this.$nextTick(() => );
+    }
 });
 </script>
