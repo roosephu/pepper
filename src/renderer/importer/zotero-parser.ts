@@ -18,7 +18,6 @@ export async function ImportFromZoteroJSON(lines: string): Promise<any> {
         } catch (e) {
             failedItems.push(item["URL"]);
         }
-        break;
     }
     /* tslint:enable:no-string-literal */
 
