@@ -23,6 +23,9 @@
 import debug from "debug";
 import { remote } from "electron";
 import Vue from "vue";
+import { ImportFromZoteroJSON } from "@/importer/zotero-parser.ts";
+import fs from "fs";
+import jsonminify from "jsonminify";
 
 const log = debug("pepper:settings");
 
@@ -31,7 +34,7 @@ export default Vue.extend({
 
     data() {
         return {
-            disabledImport: true,
+            disabledImport: true
         };
     },
 
@@ -39,22 +42,32 @@ export default Vue.extend({
         importLibrary(): void {
             const files: string[] = remote.dialog.showOpenDialog({
                 filters: [{ name: "JSON Files", extensions: ["json"] }],
-                properties: ["openFile"],
+                properties: ["openFile"]
             });
             if (files && files.length) {
                 const file = files[0];
                 log("Do what you want to do", file);
-                // log("files", files);
+                if (file !== undefined) {
+                    fs.readFile(file, "utf-8", (err, data) => {
+                        log("Loading file: " + file);
+                        if (err) {
+                            log("Error loading file: " + file + ", " + err);
+                            return;
+                        }
+
+                        ImportFromZoteroJSON(jsonminify(data));
+                    });
+                }
             }
         },
 
         exportLibrary(): void {
             //
-        },
+        }
     },
 
     mounted() {
         // this.$nextTick(() => );
-    },
+    }
 });
 </script>
