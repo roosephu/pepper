@@ -1,7 +1,7 @@
 import Library from "@/pepper";
 import PepperCreator from "@/pepper/PepperCreator";
 import PepperItem from "@/pepper/PepperItem";
-import Store from "../store";
+import Store from "@/store";
 
 function getCreator(first: string, last: string): PepperCreator {
     // TODO: search existing creators from Library.$db.author
