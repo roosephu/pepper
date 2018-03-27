@@ -51,7 +51,7 @@ export function dumpDatabase(obj: any): any {
         }
 
         for (const key of Object.keys(x)) {
-            if (key.charAt(0) !== "$") {
+            if (key.charAt(0) !== "$" && x[key]) {
                 clean(x[key]);
             }
         }
@@ -82,13 +82,21 @@ export function serialize(obj: any): any {
 
         const ret: {[key: string]: any} = _ref ? db[_ref][_id] : {};
         for (const key of Object.keys(x)) {
-            if (key.charAt(0) !== "$") {
+            if (key.charAt(0) !== "$" && x[key]) {
                 ret[key] = clean(x[key]);
             }
         }
         return _ref ? { _id, _ref } : ret;
     }
-    const root = clean(obj);
+    let root;
+    try {
+
+        root = clean(obj);
+    } catch (e) {
+        //
+    } finally {
+        //
+    }
 
     return { rep: JSON.stringify({ db, root }), db };
 }
@@ -114,7 +122,9 @@ export function deserialize(str: string): any {
 
         const ret: {[key: string]: any} = model ? db[_ref][_id] : {};
         for (const key of Object.keys(x)) {
-            ret[key] = build(x[key]);
+            if (x[key]) {
+                ret[key] = build(x[key]);
+            }
         }
         return ret;
     }

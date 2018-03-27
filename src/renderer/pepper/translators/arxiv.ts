@@ -7,7 +7,7 @@ import * as U from "./utils";
 async function parse(doc: Document, url: string): Promise<PepperItem> {
     const regex = RegExp("^https?://([^\\.]+\\.)?(arxiv\\.org|xxx\\.lanl\\.gov)/(find|catchup|list/\\w|abs/|pdf/)");
     if (!regex.test(url)) {
-        return undefined;
+        return null;
     }
 
     let id;

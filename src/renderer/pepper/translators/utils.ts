@@ -1,12 +1,14 @@
 // import { Ref } from "@/pepper/db";
 import PepperCreator, { modelCreator } from "@/pepper/PepperCreator";
 
-function xpathText(doc: Document | Node, expr: string, ns?: any, delimiter?: string) {
+export function xpathText(doc: Document | Node, expr: string, ns?: any, delimiter?: string) {
     const result: any[] = xpathMatch(doc, expr, ns);
     const strings = [];
     for (const node of result) {
         if (node.nodeType === 2 && "value" in node) {
             strings.push(node.value);
+        } else if ("content" in node) {
+            strings.push(node.content);
         } else if ("textContent" in node) {
             strings.push(node.textContent);
         } else if ("text" in node) {
@@ -18,7 +20,7 @@ function xpathText(doc: Document | Node, expr: string, ns?: any, delimiter?: str
     return strings.join(delimiter || ",");
 }
 
-function xpathMatch(doc: Document | Node, expr: string, ns?: any): Node[] {
+export function xpathMatch(doc: Document | Node, expr: string, ns?: any): Node[] {
     let resolver: any;
     if (ns) {
         resolver = (prefix: string) => ns[prefix] || null;
@@ -33,7 +35,7 @@ function xpathMatch(doc: Document | Node, expr: string, ns?: any): Node[] {
     return ret;
 }
 
-function cleanAuthor(author: string, type: string, useComma?: boolean): PepperCreator {
+export function cleanAuthor(author: string, type: string, useComma?: boolean): PepperCreator {
   const allCaps = "A-Z" + "\u0400-\u042f";		// cyrilic
 
   const allCapsRe = new RegExp("^[" + allCaps + "]+$");
@@ -66,7 +68,8 @@ function cleanAuthor(author: string, type: string, useComma?: boolean): PepperCr
       spaceIndex = author.lastIndexOf(" ", spaceIndex - 1);
       lastName = author.substring(spaceIndex + 1);
       firstName = author.substring(0, spaceIndex);
-    } while (!RegExp("\\pL").test(lastName[0]) && spaceIndex > 0); // TODO: replace RegExp by XRegExp
+    } while (false);
+    // } while (!RegExp("\\pL").test(lastName[0]) && spaceIndex > 0); // TODO: replace RegExp by XRegExp
   }
 
   if (firstName && allCapsRe.test(firstName) && firstName.length < 4 &&
@@ -97,9 +100,3 @@ function cleanAuthor(author: string, type: string, useComma?: boolean): PepperCr
 
   return new PepperCreator(firstName, lastName, type);
 }
-
-export {
-  xpathText,
-  xpathMatch,
-  cleanAuthor,
-};

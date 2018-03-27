@@ -38,9 +38,11 @@ const actions = {
 const mutations = {
     //
     addItem(state: PepperLibrary, { paper, cursor }: { paper: PepperItem, cursor?: PepperFolder }) {
-        cursor = cursor || state.cursor;
-        state.add(paper, cursor);
-        state.dirty = true;
+        if (paper) {
+            cursor = cursor || state.cursor;
+            state.add(paper, cursor);
+            state.dirty = true;
+        }
     },
 
     load(state: PepperLibrary, library: PepperLibrary) {

@@ -1,9 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import About from "@/components/About";
-import PPanel from "@/components/PPanel";
-import Settings from "@/components/Settings";
+import About from "@/components/About.vue";
+import PPanel from "@/components/PPanel.vue";
+import Settings from "@/components/Settings.vue";
 
 Vue.use(VueRouter);
 
