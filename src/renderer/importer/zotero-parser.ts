@@ -7,21 +7,40 @@ import debug from "debug";
 
 const log = debug("pepper:importer:zotero");
 
+function redirectToAbsPage(url: string): string {
+    // remove ".pdf" for nips
+    if (url.indexOf("nips") >= 0) {
+        if (url.substr(url.length - 3, url.length) === "pdf") {
+            url = url.substr(0, url.length - 4);
+        }
+    }
+
+    return url;
+}
+
+
 export async function ImportFromZoteroJSON(lines: string): Promise<any> {
     const items = JSON.parse(lines);
-    const failedItems = new Array<string>();
+    const failedUrls = new Array<string>();
 
     /* tslint:disable:no-string-literal */
     for (const item of items) {
+        let url: string;
         try {
-            Store.commit("pepper/addItem", { paper: await translate(item["URL"]) });
+            url = item["URL"] || item["Url"] || item["url"];
+            url = redirectToAbsPage(url);
+            log(url);
+            const paperItem = await translate(url);
+            if (paperItem !== undefined) {
+                Store.commit("pepper/addItem", { paper: paperItem });
+            }
         } catch (e) {
-            failedItems.push(item["URL"]);
+            failedUrls.push(url);
         }
     }
     /* tslint:enable:no-string-literal */
 
-    for (const item of failedItems) {
-        log("Failed to import" + item);
+    for (const url of failedUrls) {
+        log("Failed to import " + url);
     }
 }
