@@ -10,7 +10,8 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
     const regexs = [
         new RegExp("https?://openreview\\.net/"),
         new RegExp("https?://papers\\.nips\\.cc/"),
-        new RegExp("https?://doi\\.acm\\.org"),
+        new RegExp("https?://(doi|dl)\\.acm\\.org"),
+        new RegExp("https?://proceedings.mlr.press"),
     ];
 
     let find = false;
@@ -21,12 +22,11 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
         }
     }
     if (!find) {
-        log("URL not found: " + url);
+        // log("URL not found: " + url);
         return null;
     }
 
-    log("URL found: " + url);
-
+    // log("URL found: " + url);
     const item = new PepperItem(null);
     item.url = url;
     item.title = xpathText(doc, '//head/meta[@name="citation_title"]');
@@ -55,7 +55,7 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
     item.attachments.push(new PepperAttachment(
         "application/pdf",
         item.title,
-        xpathText(doc, '//head/meta[@name="citation_pdf_url"]'),
+        xpathText(doc, '//head/meta[@name="citation_pdf_url"][1]'),
         item,
     ));
     return item;

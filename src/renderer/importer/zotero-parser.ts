@@ -29,13 +29,13 @@ export async function ImportFromZoteroJSON(lines: string): Promise<any> {
         try {
             url = item["URL"] || item["Url"] || item["url"];
             url = redirectToAbsPage(url);
-            log(url);
+            // log(url);
             const paperItem = await translate(url);
             if (paperItem !== undefined) {
                 Store.commit("pepper/addItem", { paper: paperItem });
             }
         } catch (e) {
-            failedUrls.push(url);
+            failedUrls.push(url || item["title"]);
         }
     }
     /* tslint:enable:no-string-literal */
