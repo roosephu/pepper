@@ -31,6 +31,7 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
     item.url = url;
     item.title = xpathText(doc, '//head/meta[@name="citation_title"]');
     item.date = xpathText(doc, '//head/meta[@name="citation_publication_date"]').replace("/", "-");
+
     for (const node of xpathMatch(doc, '//head/meta[@name="citation_author"]')) {
         item.creators.push(cleanAuthor((node as any).content, "author", false));
     }
@@ -46,6 +47,9 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
             const names = author.split(",", 2);
             item.creators.push(cleanAuthor((names[1] + " " + names[0]), "author", false));
         }
+
+        const dates = xpathText(doc, '//head/meta[@name="citation_date"]').split("/");
+        item.date = dates[2] + "-" + dates[0] + "-" + dates[1];
     }
 
     item.attachments.push(new PepperAttachment(
