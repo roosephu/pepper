@@ -15,6 +15,14 @@ function redirectToAbsPage(url: string): string {
         }
     }
 
+    if (url.indexOf("pdf") >= 0) {
+        if (url.substr(url.length - 3, url.length) === "pdf") {
+            const parts = url.split("pdf");
+            url = parts[0] + "abs" + parts[1];
+            url = url.substring(0, url.length - 1);
+        }
+    }
+
     return url;
 }
 
@@ -29,13 +37,13 @@ export async function ImportFromZoteroJSON(lines: string): Promise<any> {
         try {
             url = item["URL"] || item["Url"] || item["url"];
             url = redirectToAbsPage(url);
-            log(url);
+            // log(url);
             const paperItem = await translate(url);
             if (paperItem !== undefined) {
                 Store.commit("pepper/addItem", { paper: paperItem });
             }
         } catch (e) {
-            failedUrls.push(url);
+            failedUrls.push(url || item["title"]);
         }
     }
     /* tslint:enable:no-string-literal */
