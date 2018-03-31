@@ -20,8 +20,6 @@ import { setInterval, setTimeout } from "timers";
 import Vue from "vue";
 import { mapActions, mapMutations, mapState } from "vuex";
 
-// PDFJS.GlobalWorkerOptions.workerSrc = 'pdf.worker.js'
-
 const log = debug("pepper:main");
 
 export default {

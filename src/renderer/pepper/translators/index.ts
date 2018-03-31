@@ -31,3 +31,4 @@ export {
 
 require("./arxiv");
 require("./openreview");
+require("./pdf");
