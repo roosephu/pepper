@@ -6,12 +6,12 @@
                     .ui.four.fields
                         .nine.wide.field
                             .ui.input.fluid
-                                input(type='text', name='url', placeholder='URL')
+                                input(type='text' name='url' placeholder='URL' @drop.prevent.stop="dropFiles")
                         .two.wide.field
                             a.ui.button.primary.submit Add
                         .four.wide.field
                             .ui.input.field
-                                input#search(type='text', name='search', placeholder='Search...', v-model='filter.title.$regex')
+                                input#search(type='text' name='search' placeholder='Search...' v-model='filter.title.$regex')
                         //- .two.wide.field
                         //-     a.ui.button.primary.submit Search
 
@@ -43,8 +43,13 @@ import PepperFolder from "@/pepper/PepperFolder";
 import PepperItem from "@/pepper/PepperItem";
 import PepperLibrary from "@/pepper/PepperLibrary";
 import { translate } from "@/pepper/translators";
+import { parse } from "@/pepper/translators/local";
+import debug from "debug";
 import Vue from "vue";
 import { mapActions, mapMutations, mapState } from "vuex";
+
+const log = debug("pepper:Panel");
+
 
 export default Vue.extend({
     name: "PPanel",
@@ -65,6 +70,14 @@ export default Vue.extend({
         async submit(this: any, url: string) {
             const paper = await translate(url);
             this.addItem({ paper });
+        },
+
+        async dropFiles(e: DragEvent) {
+            const { files } = e.dataTransfer;
+            for (const file of Array.from(files)) {
+                const paper = await parse(file);
+                this.addItem({ paper });
+            }
         },
 
         ...mapMutations("pepper", ["addItem"]),

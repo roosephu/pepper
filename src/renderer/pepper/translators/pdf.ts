@@ -2,7 +2,7 @@ import PepperAttachment from "@/pepper/PepperAttachment";
 import PepperCreator from "@/pepper/PepperCreator";
 import PepperItem from "@/pepper/PepperItem";
 import { registerTranslator } from "@/pepper/translators";
-import { cleanAuthor } from "@/pepper/translators/utils";
+import { cleanAuthor, readBlob } from "@/pepper/translators/utils";
 import Axios from "axios";
 import debug from "debug";
 import { PDFJSStatic } from "pdfjs-dist";
@@ -12,16 +12,6 @@ const log = debug("pepper:translator:pdf");
 const PDFJS: PDFJSStatic = require("pdfjs-dist");
 
 (PDFJS as any).GlobalWorkerOptions.workerSrc = "pdf.worker.js";
-
-function readBlob(blob: Blob): Promise<Uint8Array> {
-    return new Promise<Uint8Array>((resolve) => {
-        const fileReader = new FileReader();
-        fileReader.onload = function() {
-            resolve(new Uint8Array(this.result));
-        };
-        fileReader.readAsArrayBuffer(blob);
-    });
-}
 
 function guessAuthors(rep: string): PepperCreator[] {
     log(`Guess authors from "${rep}"`);
@@ -58,6 +48,11 @@ function guessAuthors(rep: string): PepperCreator[] {
 async function parse(doc: Document, url: string): Promise<PepperItem> {
     const { data } = await Axios(url, { responseType: "blob" });
     const binary = await readBlob(data);
+    const item = parseData(binary, url);
+    return item;
+}
+
+export async function parseData(binary: Uint8Array, source: string = "local"): Promise<PepperItem> {
     const pdf = await PDFJS.getDocument(binary);
     const metadata = await pdf.getMetadata();
     const { Author, Title, CreationDate } = metadata.info;
@@ -65,21 +60,23 @@ async function parse(doc: Document, url: string): Promise<PepperItem> {
 
     const item = new PepperItem(null);
     item.title = Title;
+    item.creators.push(...guessAuthors(Author));
+
+    // After creators are guessed.
     item.attachments.push(new PepperAttachment(
         "application/pdf",
         Title,
-        url,
+        source,
         item,
     ));
-    item.creators.push(...guessAuthors(Author));
 
     const dateRegex = /^D:(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(.)(\d{2})'(\d{2})'$/;
     const match = (CreationDate as string).match(dateRegex);
+
     if (match) {
         const [year, month, day] = match.slice(1, 4);
         item.date = `${year}-${month}-${day}`;
     }
-
     return item;
 }
 

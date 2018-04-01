@@ -100,3 +100,13 @@ export function cleanAuthor(author: string, type: string, useComma?: boolean): P
 
   return new PepperCreator(firstName, lastName, type);
 }
+
+export function readBlob(blob: Blob): Promise<Uint8Array> {
+    return new Promise<Uint8Array>((resolve) => {
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+            resolve(new Uint8Array(this.result));
+        };
+        fileReader.readAsArrayBuffer(blob);
+    });
+}
