@@ -3,7 +3,7 @@
         td
             //- i.white.icon.calendar.online
             .ui.checkbox.fitted
-                input(type="checkbox" v-model="paper.done")
+                input(type="checkbox" v-model="done")
             //- i.icon.calendar.check(:class="{'online': !thi}")
         td(@dblclick="open(paper)" draggable="true" @dragstart="drag({ src: paper, srcType: 'item' })")
             a(v-editable.commit="paper.title")
@@ -37,6 +37,16 @@ export default Vue.extend({
     },
 
     computed: {
+        done: {
+            get() {
+                return this.paper.done;
+            },
+
+            set(value: boolean) {
+                this.updateProperty({ obj: this.paper, key: "done", value });
+            },
+        },
+
         ...mapState(["pepper"]),
     },
 
