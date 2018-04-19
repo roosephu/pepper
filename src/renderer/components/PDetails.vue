@@ -81,7 +81,6 @@ export default Vue.extend({
                 this.file.removeCallback();
                 // log(newNote);
                 this.updateProperty({ obj: this.paper.notes[0], key: "note", value: newNote });
-                this.$nextTick(() => MathJax.Hub.Queue(["Typeset", MathJax.Hub]));
                 this.file = null;
             }
         },
@@ -93,10 +92,14 @@ export default Vue.extend({
         ...mapMutations("pepper", ["updateProperty"]),
     },
 
+    watch: {
+        notes() {
+            this.$nextTick(() => MathJax.Hub.Queue(["Typeset", MathJax.Hub]));
+        },
+    },
+
     mounted() {
-        this.$nextTick(() => {
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-        });
+        //
     },
 });
 </script>
