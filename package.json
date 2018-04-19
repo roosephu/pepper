@@ -52,6 +52,7 @@
     }
   },
   "dependencies": {
+    "@types/mathjax": "0.0.32",
     "debug": "^3.1.0",
     "dedent": "^0.7.0",
     "fs-extra": "^5.0.0",
@@ -61,8 +62,12 @@
     "koa-body": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.4.0",
+    "markdown-it": "^8.4.1",
+    "markdown-it-mathjax": "^2.0.0",
+    "marked": "^0.3.19",
     "pdfjs-dist": "^2.0.428",
     "shortid": "^2.2.8",
+    "tmp": "0.0.33",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vuex": "^3.0.1"
@@ -76,9 +81,12 @@
     "@types/koa": "^2.0.44",
     "@types/koa-bodyparser": "^4.2.0",
     "@types/koa-router": "^7.0.27",
+    "@types/markdown-it": "0.0.4",
+    "@types/marked": "^0.3.0",
     "@types/pdfjs-dist": "^0.1.2",
     "@types/semantic-ui": "^2.2.6",
     "@types/shortid": "0.0.29",
+    "@types/tmp": "0.0.33",
     "@types/vue-router": "^2.0.0",
     "axios": "^0.16.2",
     "babel-core": "^6.25.0",

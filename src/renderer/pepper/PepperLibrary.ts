@@ -20,6 +20,7 @@ export default class PepperLibrary {
     public path: string;
     public _id: string;
     public dirty: boolean;
+    public trash: PepperFolder;
     public $db: {[key: string]: {[key: string]: any}};
 
     constructor(path: string) {
@@ -30,8 +31,18 @@ export default class PepperLibrary {
         this.dirty = false;
         this.citer = new PepperCiter();
         this._id = shortid.generate();
+        this.trash = new PepperFolder("Trash");
+        this.root.addFolder(this.trash);
 
         this.$db = {};
+    }
+
+    public getTrash(): PepperFolder {
+        if (!this.trash) {
+            this.trash = new PepperFolder("Trash");
+            this.root.addFolder(this.trash);
+        }
+        return this.trash;
     }
 
     public composePath(suf: string): string {

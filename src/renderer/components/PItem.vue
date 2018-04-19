@@ -10,7 +10,7 @@
         td {{paper.$formattedCreators}}
         td
             p(v-editable="tags")
-        td {{paper.citeKey}}
+        td(@dblclick="$router.push({ name: 'details', params: { id: paper._id } })") {{paper.citeKey}}
 </template>
 
 <script lang="ts">
@@ -63,8 +63,12 @@ export default Vue.extend({
             this.$menu.popup(remote.getCurrentWindow());
         },
 
+        moveToTrash() {
+            this.moveItem({ item: this.paper, folder: this.pepper.getTrash() });
+        },
+
         ...mapMutations("drag", ["drag"]),
-        ...mapMutations("pepper", ["removeItem", "updateProperty"]),
+        ...mapMutations("pepper", ["removeItem", "updateProperty", "moveItem"]),
     },
 
     watch: {
@@ -75,7 +79,9 @@ export default Vue.extend({
 
     mounted() {
         const template = [
-            { label: "Remove", click: () => this.removeItem(this.paper) },
+            { label: "Details", click: () => this.$router.push({ name: "details", params: { id: this.paper._id } }) },
+            { type: "separator" as "separator" },
+            { label: "Move to Trash", click: () => this.moveToTrash() },
         ];
         this.$menu = remote.Menu.buildFromTemplate(template);
 

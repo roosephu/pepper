@@ -9,6 +9,21 @@
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, "\\\\") %>')
       </script>
     <% } %>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        "extensions": ["custom.js"],
+        "HTML-CSS": {
+            imageFont: null,
+        },
+        "tex2jax": {
+            displayMath: [["$$\n", "\n$$"], ["$$\r\n", "\r\n$$"], ["\\[", "\\]"]],
+            inlineMath: [["$", "$"], ["$$", "$$"], ["\\(", "\\)"]],
+            processEscapes: true,
+        },
+    });
+    </script>
+    <script type="text/javascript" async src="static/MathJax/MathJax.js?config=TeX-AMS_SVG-full"></script>
+
   </head>
   <body>
     <div id="app"></div>
