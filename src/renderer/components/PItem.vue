@@ -1,9 +1,9 @@
 <template lang="pug">
-    tr(@contextmenu="popup")
+    tr(@contextmenu="popup" :class="{'negative': done}")
         td
             //- i.white.icon.calendar.online
             .ui.checkbox.fitted
-                input(type="checkbox" v-model="done")
+                input(type="checkbox")
             //- i.icon.calendar.check(:class="{'online': !thi}")
         td(@dblclick="open(paper)" draggable="true" @dragstart="drag({ src: paper, srcType: 'item' })")
             a(v-editable.commit="paper.title")
@@ -37,14 +37,8 @@ export default Vue.extend({
     },
 
     computed: {
-        done: {
-            get() {
-                return this.paper.done;
-            },
-
-            set(value: boolean) {
-                this.updateProperty({ obj: this.paper, key: "done", value });
-            },
+        done() {
+            return this.paper.done;
         },
 
         ...mapState(["pepper"]),
@@ -52,10 +46,10 @@ export default Vue.extend({
 
     methods: {
         open(paper: PepperItem) {
-            // log("dblclick");
             const attachment = paper.$mainFile;
             if (attachment) {
-                shell.openItem(this.pepper.composePath(attachment));
+                const path = this.pepper.composePath(attachment);
+                shell.openItem(path);
             }
         },
 
@@ -65,6 +59,10 @@ export default Vue.extend({
 
         moveToTrash() {
             this.moveItem({ item: this.paper, folder: this.pepper.getTrash() });
+        },
+
+        markAsRead() {
+            this.updateProperty({ obj: this.paper, key: "done", value: !this.paper.done });
         },
 
         ...mapMutations("drag", ["drag"]),
@@ -80,6 +78,7 @@ export default Vue.extend({
     mounted() {
         const template = [
             { label: "Details", click: () => this.$router.push({ name: "details", params: { id: this.paper._id } }) },
+            { label: "Mark as Read/Unread", click: () => this.markAsRead() },
             { type: "separator" as "separator" },
             { label: "Move to Trash", click: () => this.moveToTrash() },
         ];

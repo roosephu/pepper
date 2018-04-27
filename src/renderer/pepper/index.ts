@@ -42,6 +42,7 @@ function readDisk(): PepperLibrary {
 
 const Library = readDisk();
 Library.cleanAttachments();
+log(Library.path);
 
 export default Library;
 

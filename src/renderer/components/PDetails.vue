@@ -57,7 +57,7 @@ export default Vue.extend({
 
         note() {
             const source: string = this.paper.notes[0].note || "";
-            log(source);
+            // log(source);
             const escapeSource = source.replace(/\\\\/g, "\\\\\\\\");
             return md.render(source);
         },
@@ -82,6 +82,7 @@ export default Vue.extend({
                 // log(newNote);
                 this.updateProperty({ obj: this.paper.notes[0], key: "note", value: newNote });
                 this.file = null;
+                this.$nextTick(() => MathJax.Hub.Queue(["Typeset", MathJax.Hub]));
             }
         },
 
@@ -99,18 +100,19 @@ export default Vue.extend({
     },
 
     mounted() {
+        this.$nextTick(() => MathJax.Hub.Queue(["Typeset", MathJax.Hub]));
         //
     },
 });
 </script>
 
-<style scoped>
+<style>
 .smallcaps {
     font-variant: small-caps;
 }
 
-.MathJax_SVG {
-    outline-width: 0px !important;
+.mjx-chtml {
+    outline-width: 0px;
 }
 
 .serif {

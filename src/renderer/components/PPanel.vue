@@ -23,7 +23,7 @@
                 .ui.checkbox
                     input(type='checkbox', v-model="showPapersRec")
                     label show papers recursively
-                table.ui.table.celled.very.compact.striped
+                table.ui.table.celled.very.compact
                     thead
                         tr
                             th.collapsing.center
